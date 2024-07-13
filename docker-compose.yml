@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  vue:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/app
+    networks:
+      - app-network
+
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - app-network
+    environment:
+      - COMPOSER_ALLOW_SUPERUSER=1
+
+  web:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./frontend/dist:/usr/share/nginx/html
+      - ./backend:/var/www/html
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0.32
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ai-chat
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:
