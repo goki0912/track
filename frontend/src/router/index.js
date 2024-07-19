@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../components/HomePage.vue'
 import LoginPage from "@/components/LoginPage.vue";// ホームページ用のコンポーネントを作成します
 import RegisterPage from "@/components/RegisterPage.vue";
+import ProfilePage from "@/components/ProfilePage.vue";
 import { useAuthStore } from '@/stores/auth';
 
 
@@ -29,6 +30,13 @@ const routes = [
             requiresAuth: true
         }
     },
+    {
+        path: '/profile',
+        component: ProfilePage,
+        meta: {
+            requiresAuth: true
+        }
+    }
 ]
 
 const router = createRouter({
