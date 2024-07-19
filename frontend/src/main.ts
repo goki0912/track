@@ -11,11 +11,11 @@ axios.defaults.withCredentials = true; // Cookieを使用する場合
 const pinia = createPinia();
 const app = createApp(App)
 // Cookieからトークンを読み込んで設定
-const getCookie = (name) => {
+const getCookie = (name: string) => {
     const value = `; ${document.cookie}`;  // 全てのCookieを文字列として取得し、前にセミコロンとスペースを追加
-    const parts = value.split(`; ${name}=`);  // 指定された名前のCookieを探すために分割
+    const parts:string[] = value.split(`; ${name}=`);  // 指定された名前のCookieを探すために分割
     if (parts.length === 2) {
-        return parts.pop().split(';').shift();  // Cookieの値を取得して返す
+        return parts.pop()?.split(';').shift();  // Cookieの値を取得して返す
     }
 };
 // Cookieから'token'という名前の値を取得
