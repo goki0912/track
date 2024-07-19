@@ -1,15 +1,18 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import axios from "axios";
+import { useRouter, useRoute } from "vue-router";
 
 const spotifyAuthUrl = ref('');
 const accessToken = ref<string | null>(null);
 const userProfile = ref<any>(null);
+const router = useRouter();
+const route = useRoute();
 
 const getUserProfile = async () => {
   if (accessToken.value) {
     try {
-      const response = await axios.get('https://api.spotify.com/v1/me', {
+      const response = await axios.get('/spotify/user-profile', {
         headers: {
           Authorization: `Bearer ${accessToken.value}`,
         },
@@ -24,24 +27,27 @@ const getUserProfile = async () => {
 // 認証URLを取得する関数
 const fetchSpotifyAuthUrl = async () => {
   try {
-    const response = await axios.get('/api/spotify/auth-url');
+    const response = await axios.get('/spotify/auth-url');
     spotifyAuthUrl.value = response.data.url;
   } catch (error) {
     console.error('Error fetching Spotify auth URL:', error);
   }
 };
 
-onMounted(async () => {
-  await fetchSpotifyAuthUrl();
-
-  // Laravelからのリダイレクト時にトークンを取得
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get('spotify_access_token');
-  if (token) {
-    sessionStorage.setItem('spotify_access_token', token);
-    accessToken.value = token;
-    getUserProfile();
-    window.history.replaceState({}, document.title, '/profile');
+const handleSpotifyCallback = async () => {
+  const code = route.query.code as string;
+  if (code) {
+    try {
+      console.log("!!!!!!")
+      const response = await axios.get(`/spotify/callback?code=${code}`);
+      const token = response.data.access_token;
+      sessionStorage.setItem('spotify_access_token', token);
+      accessToken.value = token;
+      getUserProfile();
+      router.replace({ path: '/profile', query: {} });
+    } catch (error) {
+      console.error('Error handling Spotify callback:', error);
+    }
   } else {
     const sessionToken = sessionStorage.getItem('spotify_access_token');
     if (sessionToken) {
@@ -49,6 +55,11 @@ onMounted(async () => {
       getUserProfile();
     }
   }
+};
+
+onMounted(async () => {
+  await fetchSpotifyAuthUrl();
+  await handleSpotifyCallback();
 });
 </script>
 

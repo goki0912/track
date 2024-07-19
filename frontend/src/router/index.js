@@ -41,7 +41,7 @@ const routes = [
 
 const router = createRouter({
     history: createWebHistory(),
-    routes
+    routes,
 })
 
 router.beforeEach((to, from, next) => {

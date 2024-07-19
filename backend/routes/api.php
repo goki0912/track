@@ -15,4 +15,6 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 
 Route::get('/spotify/auth-url', [SpotifyController::class, 'getAuthUrl']);
-Route::get('/callback', [SpotifyController::class, 'handleCallback']);
+Route::get('/spotify/callback', [SpotifyController::class, 'handleCallback']);
+Route::get('/spotify/user-profile', [SpotifyController::class, 'getUserProfile']);
+

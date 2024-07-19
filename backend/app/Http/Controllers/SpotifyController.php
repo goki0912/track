@@ -35,16 +35,22 @@ class SpotifyController extends Controller
             'client_secret' => env('SPOTIFY_CLIENT_SECRET'),
         ]);
 
-
         $data = $response->json();
 
         // アクセストークンを取得
         $accessToken = $data['access_token'];
-
-        // トークンをセッションに保存（または他の方法で保存）
-        session(['spotify_access_token' => $accessToken]);
-
-        // フロントエンドにリダイレクト
-        return redirect('/profile')->with('spotify_access_token', $accessToken);
+        // フロントエンドにJSON形式でトークンを返す
+        return response()->json(['access_token' => $accessToken]);
     }
+    public function getUserProfile(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $accessToken = $request->header('Authorization');
+
+        $response = Http::withHeaders([
+            'Authorization' => $accessToken,
+        ])->get('https://api.spotify.com/v1/me');
+
+        return response()->json($response->json());
+    }
+
 }
