@@ -1,9 +1,9 @@
 <template>
-  <button @click="logout" class="w-full py-2 bg-red-500 text-white rounded-md hover:bg-red-600">Logout</button>
+  <a @click="logout" class="block py-2 px-4 rounded text-red-400 hover:bg-green-800">Logout</a>
 </template>
 
 <script>
-import { useAuthStore } from '../stores/auth';
+import { useAuthStore } from '@/stores/auth';
 import axios from 'axios';
 
 axios.defaults.withCredentials = true;

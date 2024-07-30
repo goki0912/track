@@ -1,16 +1,11 @@
 <template>
   <div id="app">
-    <router-view />
+    <SideMenu>
+      <router-view />
+    </SideMenu>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  name: 'App',
-});
+<script lang="ts" setup>
+import SideMenu from './components/SideMenu.vue';
 </script>
-
-<style>
-</style>

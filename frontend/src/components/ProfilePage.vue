@@ -17,7 +17,10 @@ const getUserProfile = async () => {
           Authorization: `Bearer ${accessToken.value}`,
         },
       });
+      // access tokenがexpiredした時のため
+      if (!response.data.error) {
       userProfile.value = response.data;
+      }
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }
@@ -38,7 +41,6 @@ const handleSpotifyCallback = async () => {
   const code = route.query.code as string;
   if (code) {
     try {
-      console.log("!!!!!!")
       const response = await axios.get(`/spotify/callback?code=${code}`);
       const token = response.data.access_token;
       sessionStorage.setItem('spotify_access_token', token);
@@ -73,7 +75,7 @@ onMounted(async () => {
         <p><strong>Name:</strong> {{ userProfile.display_name }}</p>
         <p><strong>Email:</strong> {{ userProfile.email }}</p>
         <p><strong>Country:</strong> {{ userProfile.country }}</p>
-        <img :src="userProfile.images[0]?.url" alt="Profile Image" v-if="userProfile.images.length">
+        <img :src="userProfile.images[0]?.url" alt="Profile Image" v-if="userProfile.images?.length">
       </div>
     </div>
   </div>
