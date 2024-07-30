@@ -7,16 +7,27 @@ use Illuminate\Support\Facades\Http;
 
 class SpotifyController extends Controller
 {
+    private $client_id;
+    private $client_secret;
+    private $redirect_uri;
+
+    public function __construct()
+    {
+        $this->client_id = env('SPOTIFY_CLIENT_ID');
+        $this->client_secret = env('SPOTIFY_CLIENT_SECRET');
+        $this->redirect_uri = env('SPOTIFY_REDIRECT_URI');
+    }
+
     public function getAuthUrl(): \Illuminate\Http\JsonResponse
     {
-        $clientId = env('SPOTIFY_CLIENT_ID');
-        $redirectUri = env('SPOTIFY_REDIRECT_URI');
+//        $clientId = env('SPOTIFY_CLIENT_ID');
+//        $redirectUri = env('SPOTIFY_REDIRECT_URI');
         $scopes = 'user-read-private user-read-email';
 
         $url = 'https://accounts.spotify.com/authorize?' . http_build_query([
                 'response_type' => 'code',
-                'client_id' => $clientId,
-                'redirect_uri' => $redirectUri,
+                'client_id' => $this->client_id,
+                'redirect_uri' => $this->redirect_uri,
                 'scope' => $scopes,
             ]);
 
@@ -30,9 +41,9 @@ class SpotifyController extends Controller
         $response = Http::asForm()->post('https://accounts.spotify.com/api/token', [
             'grant_type' => 'authorization_code',
             'code' => $code,
-            'redirect_uri' => env('SPOTIFY_REDIRECT_URI'),
-            'client_id' => env('SPOTIFY_CLIENT_ID'),
-            'client_secret' => env('SPOTIFY_CLIENT_SECRET'),
+            'redirect_uri' => $this->redirect_uri,
+            'client_id' => $this->client_id,
+            'client_secret' => $this->client_secret,
         ]);
 
         $data = $response->json();
@@ -49,6 +60,35 @@ class SpotifyController extends Controller
         $response = Http::withHeaders([
             'Authorization' => $accessToken,
         ])->get('https://api.spotify.com/v1/me');
+
+        return response()->json($response->json());
+    }
+
+    private function getAccessToken()
+    {
+        $response = Http::asForm()->post('https://accounts.spotify.com/api/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => $this->client_id,
+            'client_secret' => $this->client_secret,
+        ]);
+
+        return $response->json()['access_token'];
+    }
+
+    public function searchTrack(Request $request)
+    {
+        $query = $request->query('query');
+
+
+        $accessToken = $this->getAccessToken();
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $accessToken,
+        ])->get('https://api.spotify.com/v1/search', [
+            'q' => $query,
+            'type' => 'track',
+            'limit' => 10, // 検索結果の最大数を指定
+        ]);
 
         return response()->json($response->json());
     }

@@ -21,7 +21,7 @@ const toggleMenu = () => {
 </script>
 
 <template>
-  <div class="flex">
+  <div class="flex bg-green-50">
     <div v-if="showMenu" class="hidden md:block md:w-56 bg-green-700 text-white min-h-screen">
       <div class="p-4">
         <h2 class="text-2xl font-bold">Menu</h2>
@@ -33,7 +33,7 @@ const toggleMenu = () => {
         </ul>
       </div>
     </div>
-    <div class="flex-1">
+    <div class="flex-1 bg-green-50">
       <div v-if="showMenu" class="md:hidden bg-green-700 p-4 text-white flex justify-between items-center">
         <h2 class="text-2xl font-bold">Menu</h2>
         <button @click="toggleMenu" class="focus:outline-none">
@@ -50,7 +50,7 @@ const toggleMenu = () => {
           <Logout />
         </ul>
       </div>
-      <div class="bg-green-50">
+      <div class="">
         <slot></slot>
       </div>
     </div>
