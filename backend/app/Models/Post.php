@@ -14,7 +14,7 @@ class Post extends Model
         'content',
         'track_id',
         'user_id',
-        'favorite',
+        'likes',
     ];
 
     public function user():BelongsTo
