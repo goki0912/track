@@ -15,7 +15,7 @@
       <div v-if="selectedTrack">
         <h3>Selected Track</h3>
         <p>{{ selectedTrack.name }} by {{ selectedTrack.artists[0].name }}</p>
-        <img :src="selectedTrack.album.images[0]?.url" alt="Album Art">
+        <img :src="selectedTrack.album.images[0]?.url" alt="Album Art" class="w-20 h-20">
       </div>
       <button type="submit">Post</button>
     </form>

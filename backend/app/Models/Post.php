@@ -12,6 +12,7 @@ class Post extends Model
 
     protected $fillable = [
         'content',
+        'track_id',
         'user_id',
         'favorite',
     ];
