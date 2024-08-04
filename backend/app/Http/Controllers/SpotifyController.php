@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class SpotifyController extends Controller
@@ -20,8 +21,7 @@ class SpotifyController extends Controller
 
     public function getAuthUrl(): \Illuminate\Http\JsonResponse
     {
-//        $clientId = env('SPOTIFY_CLIENT_ID');
-//        $redirectUri = env('SPOTIFY_REDIRECT_URI');
+//        もっと色々許可する？
         $scopes = 'user-read-private user-read-email';
 
         $url = 'https://accounts.spotify.com/authorize?' . http_build_query([
@@ -66,19 +66,33 @@ class SpotifyController extends Controller
 
     private function getAccessToken()
     {
+        // まずキャッシュにトークンが存在するか確認
+        if (Cache::has('spotify_access_token')) {
+            return Cache::get('spotify_access_token');
+        }
+
+        // トークンがキャッシュされていない場合、新しいトークンを取得
         $response = Http::asForm()->post('https://accounts.spotify.com/api/token', [
             'grant_type' => 'client_credentials',
             'client_id' => $this->client_id,
             'client_secret' => $this->client_secret,
         ]);
 
-        return $response->json()['access_token'];
+        $accessToken = $response->json()['access_token'];
+        $expiresIn = $response->json()['expires_in']; // トークンの有効期限 (秒単位)
+
+        // トークンをキャッシュに保存し、有効期限に基づいて期限を設定
+        Cache::put('spotify_access_token', $accessToken, $expiresIn - 60); // 余裕を持って1分短く設定
+
+        return $accessToken;
     }
 
     public function searchTrack(Request $request)
     {
         $query = $request->query('query');
-
+        if (!$query) {
+            return response()->json(['error' => 'Query parameter is required'], 400);
+        }
 
         $accessToken = $this->getAccessToken();
 
