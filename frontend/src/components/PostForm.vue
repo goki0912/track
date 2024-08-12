@@ -25,7 +25,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import axios from 'axios';
-import { usePostStore } from '@/stores';
+import { usePostStore } from '@/stores/postStore';
 import { SpotifyTrack, Track } from '@/types';
 
 const searchQuery = ref<string>('');
