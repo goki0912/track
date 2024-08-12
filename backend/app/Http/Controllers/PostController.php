@@ -10,11 +10,14 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    public function index() :JsonResponse
+    public function index(Request $request) :JsonResponse
     {
         $posts = Post::with(['user', 'track'])->orderBy('created_at', 'desc')->get();
+        if ($request->user()) {
+            $likedPosts = $request->user()->likedPosts->pluck('id')->toArray();
+        }
 
-        return response()->json($posts);
+        return response()->json(['posts' => $posts, 'likedPosts' => $likedPosts]);
     }
 
     public function store(Request $request): JsonResponse
@@ -39,4 +42,33 @@ class PostController extends Controller
 
         return response()->json($post);
     }
+    public function like(Request $request, $id)
+    {
+        $post = Post::findOrFail($id);
+        $user = $request->user();
+
+        // すでにいいねしているかチェック
+        if ($post->likes()->where('user_id', $user->id)->exists()) {
+            return response()->json(['message' => 'Already liked'], 400);
+        }
+
+        $post->likes()->attach($user->id);
+        $post->increment('likes');
+        return response()->json(['likes' => $post->likes]);
+    }
+
+    public function unlike(Request $request, $id)
+    {
+        $post = Post::findOrFail($id);
+        $user = $request->user();
+
+        // いいねを取り消す
+        if ($post->likes()->where('user_id', $user->id)->exists()) {
+            $post->likes()->detach($user->id);
+            $post->decrement('likes');
+        }
+
+        return response()->json(['likes' => $post->likes]);
+    }
+
 }

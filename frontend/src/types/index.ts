@@ -29,6 +29,7 @@ export interface Post {
         name: string;
     };
     track: Track;
+    likes: number;
     created_at: string;
     updated_at: string;
 }

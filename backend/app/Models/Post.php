@@ -14,17 +14,21 @@ class Post extends Model
         'content',
         'track_id',
         'user_id',
-        'favorite',
+        'likes',
     ];
 
     public function user():BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-
     public function track():BelongsTo
     {
         return $this->belongsTo(Track::class);
     }
+    public function likes()
+    {
+        return $this->belongsToMany(User::class, 'post_user_likes')->withTimestamps();
+    }
+
 
 }
