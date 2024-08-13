@@ -10,7 +10,7 @@
 
 </script>
 <template>
-  <PostList></PostList>
   <PostForm></PostForm>
+  <PostList></PostList>
 </template>
 

@@ -102,6 +102,7 @@ class SpotifyController extends Controller
             'q' => $query,
             'type' => 'track',
             'limit' => 10, // 検索結果の最大数を指定
+            'market' => 'JP', // 日本の楽曲を対象にする
         ]);
 
         return response()->json($response->json());

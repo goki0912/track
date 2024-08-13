@@ -1,24 +1,29 @@
-<!-- components/PostForm.vue -->
 <template>
   <div>
-    <h2>Post a new track</h2>
-    <form @submit.prevent="submitPost">
-      <div>
-        <label for="track-search">Search Spotify:</label>
-        <input v-model="searchQuery" id="track-search" type="text" @input="searchTracks" placeholder="Enter track name or artist">
-        <ul v-if="searchResults.length">
-          <li v-for="track in searchResults" :key="track.id" @click="selectTrack(track)">
-            {{ track.name }} by {{ track.artists[0].name }}
-          </li>
-        </ul>
-      </div>
-      <div v-if="selectedTrack">
-        <h3>Selected Track</h3>
-        <p>{{ selectedTrack.name }} by {{ selectedTrack.artists[0].name }}</p>
-        <img :src="selectedTrack.album.images[0]?.url" alt="Album Art" class="w-20 h-20">
-      </div>
-      <button type="submit">Post</button>
-    </form>
+    <button @click="openModal" class="bg-blue-500 text-white p-2">
+      +
+    </button>
+
+    <BaseModal :isOpen="isModalOpen" @close="closeModal">
+      <h2>Post a new track</h2>
+      <form @submit.prevent="submitPost">
+        <div>
+          <label for="track-search">Search Spotify:</label>
+          <input v-model="searchQuery" id="track-search" type="text" @input="searchTracks" placeholder="Enter track name or artist">
+          <ul v-if="searchResults.length">
+            <li v-for="track in searchResults" :key="track.id" @click="selectTrack(track)">
+              {{ track.name }} by {{ track.artists[0].name }}
+            </li>
+          </ul>
+        </div>
+        <div v-if="selectedTrack">
+          <h3>Selected Track</h3>
+          <p>{{ selectedTrack.name }} by {{ selectedTrack.artists[0].name }}</p>
+          <img :src="selectedTrack.album.images[0]?.url" alt="Album Art" class="w-20 h-20">
+        </div>
+        <button type="submit">Post</button>
+      </form>
+    </BaseModal>
   </div>
 </template>
 
@@ -27,11 +32,13 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { usePostStore } from '@/stores/postStore';
 import { SpotifyTrack, Track } from '@/types';
+import BaseModal from "@/components/BaseModal.vue";
 
 const searchQuery = ref<string>('');
 const searchResults = ref<SpotifyTrack[]>([]);
 const selectedTrack = ref<SpotifyTrack | null>(null);
 const postStore = usePostStore();
+const isModalOpen = ref(false);
 
 const searchTracks = async () => {
   if (searchQuery.value.length > 2) {
@@ -56,8 +63,17 @@ const submitPost = async () => {
   };
 
   await postStore.createPost(postData);
+  closeModal();
   selectedTrack.value = null;
   searchQuery.value = '';
   searchResults.value = [];
+};
+
+const openModal = () => {
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
 };
 </script>
