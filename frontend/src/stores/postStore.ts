@@ -1,4 +1,3 @@
-// store/postStore.ts
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { Post, Track } from '@/types';
