@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -19,7 +20,7 @@ class SpotifyController extends Controller
         $this->redirect_uri = env('SPOTIFY_REDIRECT_URI');
     }
 
-    public function getAuthUrl(): \Illuminate\Http\JsonResponse
+    public function getAuthUrl(): JsonResponse
     {
 //        もっと色々許可する？
         $scopes = 'user-read-private user-read-email';
@@ -53,9 +54,9 @@ class SpotifyController extends Controller
         // フロントエンドにJSON形式でトークンを返す
         return response()->json(['access_token' => $accessToken]);
     }
-    public function getUserProfile(Request $request): \Illuminate\Http\JsonResponse
+    public function getUserProfile(Request $request): JsonResponse
     {
-        $accessToken = $request->header('Authorization');
+        $accessToken = $request->header('spotifyAuthorization');
 
         $response = Http::withHeaders([
             'Authorization' => $accessToken,
@@ -102,6 +103,7 @@ class SpotifyController extends Controller
             'q' => $query,
             'type' => 'track',
             'limit' => 10, // 検索結果の最大数を指定
+            'market' => 'JP', // 日本の楽曲を対象にする
         ]);
 
         return response()->json($response->json());
