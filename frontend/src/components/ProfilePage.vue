@@ -14,7 +14,7 @@ const getUserProfile = async () => {
     try {
       const response = await axios.get('/spotify/user-profile', {
         headers: {
-          Authorization: `Bearer ${accessToken.value}`,
+          spotifyAuthorization: `Bearer ${accessToken.value}`,
         },
       });
       // access tokenがexpiredした時のため
