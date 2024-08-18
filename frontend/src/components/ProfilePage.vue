@@ -14,6 +14,7 @@ const getUserProfile = async () => {
     try {
       const response = await axios.get('/spotify/user-profile', {
         headers: {
+          // sanctumの認証でAuthorizationヘッダーを使っていたためカスタムヘッダーを使う
           spotifyAuthorization: `Bearer ${accessToken.value}`,
         },
       });
