@@ -15,6 +15,7 @@ class Track extends Model
         'artist_name',
         'album_name',
         'album_image_url',
+        'uri',
     ];
 
     public function posts()

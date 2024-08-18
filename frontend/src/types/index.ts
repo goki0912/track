@@ -18,6 +18,7 @@ export interface Track {
     artist_name: string;
     album_name: string;
     album_image_url: string;
+    uri: string;
 }
 
 // Postモデルの型定義

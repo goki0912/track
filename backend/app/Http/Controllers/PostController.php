@@ -28,6 +28,7 @@ class PostController extends Controller
             'artist_name' => 'required|string',
             'album_name' => 'required|string',
             'album_image_url' => 'required|string',
+            'uri' => 'required|string',
         ]);
 
         $track = Track::firstOrCreate(

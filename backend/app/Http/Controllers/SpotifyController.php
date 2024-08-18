@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SpotifyController extends Controller
 {
@@ -23,7 +24,7 @@ class SpotifyController extends Controller
     public function getAuthUrl(): JsonResponse
     {
 //        もっと色々許可する？
-        $scopes = 'user-read-private user-read-email';
+        $scopes = 'user-read-private user-read-email user-modify-playback-state';
 
         $url = 'https://accounts.spotify.com/authorize?' . http_build_query([
                 'response_type' => 'code',
@@ -107,6 +108,30 @@ class SpotifyController extends Controller
         ]);
 
         return response()->json($response->json());
+    }
+
+    public function playTrack(Request $request)
+    {
+        $accessToken = $request->header('spotifyAuthorization');
+        $trackUri = $request->input('uri');
+        Log::error($accessToken);
+        Log::error($trackUri);
+        // 必要です↓
+//        $deviceId = $request->input('device_id'); // 必要に応じてデバイスIDも取得
+
+        $response = Http::withHeaders([
+            'Authorization' => $accessToken,
+            'Content-Type' => 'application/json',
+        ])->put('https://api.spotify.com/v1/me/player/play', [
+            'uris' => [$trackUri],
+        ]);
+        Log::info($response);
+
+        if ($response->successful()) {
+            return response()->json(['message' => 'Track is playing'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to play track', 'error' => $response->body()], 500);
+        }
     }
 
 }

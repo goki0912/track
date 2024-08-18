@@ -60,6 +60,7 @@ const submitPost = async () => {
     artist_name: selectedTrack.value.artists[0].name,
     album_name: selectedTrack.value.album.name,
     album_image_url: selectedTrack.value.album.images[0]?.url || '',
+    uri: selectedTrack.value.uri
   };
 
   await postStore.createPost(postData);

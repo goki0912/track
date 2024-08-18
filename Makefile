@@ -18,11 +18,14 @@ build:
 	$(dco) build
 
 # Docker Composeを使用してキャッシュを使わずに再ビルド
-rebuild:
-	$(dco) down --rmi all --volumes --remove-orphans
-	$(dco) build --no-cache
-	$(dco) up -d
+#rebuild:
+#	$(dco) down --rmi all --volumes --remove-orphans
+#	$(dco) build --no-cache
+#	$(dco) up -d
 
 # Docker Composeのログを表示
 logs:
 	$(dco) logs -f
+
+cacheclear:
+	$(dco) exec app php artisan optimize:clear
