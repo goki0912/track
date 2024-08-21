@@ -44,9 +44,13 @@ const playTrack = async (trackUri: string) => {
       console.error('Access token not found');
       return;
     }
-    console.log(accessToken);
-    console.log("aaaaaaa", trackUri);
+    const device = await axios.get('spotify/devices', {
+      headers: {
+        spotifyAuthorization: `Bearer ${accessToken}`
+      }
+    });
     const response = await axios.post('spotify/play-track', {
+      device_id: device.data.devices[0].id,
       uri: trackUri
     },
     {

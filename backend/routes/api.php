@@ -28,6 +28,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/posts/{id}/like', [PostController::class, 'like']);
     Route::post('/posts/{id}/unlike', [PostController::class, 'unlike']);
 
+    Route::get('/spotify/devices', [SpotifyController::class, 'getDevices']);
     Route::post('spotify/play-track', [SpotifyController::class, 'playTrack']);
 });
 
