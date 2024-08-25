@@ -10,17 +10,17 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
-  isOpen: Boolean,
-});
+  isOpen: Boolean
+})
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close'])
 
 const closeModal = () => {
-  emit('close');
-};
+  emit('close')
+}
 </script>
 
 <style scoped>

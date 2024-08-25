@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
-import axios from "axios";
-import { useRouter, useRoute } from "vue-router";
+import { onMounted, ref } from 'vue'
+import axios from 'axios'
+import { useRouter, useRoute } from 'vue-router'
 
-const spotifyAuthUrl = ref('');
-const accessToken = ref<string | null>(null);
-const userProfile = ref<any>(null);
-const router = useRouter();
-const route = useRoute();
+const spotifyAuthUrl = ref('')
+const accessToken = ref<string | null>(null)
+const userProfile = ref<any>(null)
+const router = useRouter()
+const route = useRoute()
 
 const getUserProfile = async () => {
   if (accessToken.value) {
@@ -15,55 +15,55 @@ const getUserProfile = async () => {
       const response = await axios.get('/spotify/user-profile', {
         headers: {
           // sanctumの認証でAuthorizationヘッダーを使っていたためカスタムヘッダーを使う
-          spotifyAuthorization: `Bearer ${accessToken.value}`,
-        },
-      });
+          spotifyAuthorization: `Bearer ${accessToken.value}`
+        }
+      })
       // access tokenがexpiredした時のため
       if (!response.data.error) {
-      userProfile.value = response.data;
+        userProfile.value = response.data
       }
     } catch (error) {
-      console.error('Error fetching user profile:', error);
+      console.error('Error fetching user profile:', error)
     }
   }
-};
+}
 
 // 認証URLを取得する関数
 const fetchSpotifyAuthUrl = async () => {
   try {
-    const response = await axios.get('/spotify/auth-url');
-    spotifyAuthUrl.value = response.data.url;
+    const response = await axios.get('/spotify/auth-url')
+    spotifyAuthUrl.value = response.data.url
   } catch (error) {
-    console.error('Error fetching Spotify auth URL:', error);
+    console.error('Error fetching Spotify auth URL:', error)
   }
-};
+}
 
 const handleSpotifyCallback = async () => {
-  const code = route.query.code as string;
+  const code = route.query.code as string
   if (code) {
     try {
-      const response = await axios.get(`/spotify/callback?code=${code}`);
-      const token = response.data.access_token;
-      sessionStorage.setItem('spotify_access_token', token);
-      accessToken.value = token;
-      getUserProfile();
-      router.replace({ path: '/profile', query: {} });
+      const response = await axios.get(`/spotify/callback?code=${code}`)
+      const token = response.data.access_token
+      sessionStorage.setItem('spotify_access_token', token)
+      accessToken.value = token
+      getUserProfile()
+      router.replace({ path: '/profile', query: {} })
     } catch (error) {
-      console.error('Error handling Spotify callback:', error);
+      console.error('Error handling Spotify callback:', error)
     }
   } else {
-    const sessionToken = sessionStorage.getItem('spotify_access_token');
+    const sessionToken = sessionStorage.getItem('spotify_access_token')
     if (sessionToken) {
-      accessToken.value = sessionToken;
-      getUserProfile();
+      accessToken.value = sessionToken
+      getUserProfile()
     }
   }
-};
+}
 
 onMounted(async () => {
-  await fetchSpotifyAuthUrl();
-  await handleSpotifyCallback();
-});
+  await fetchSpotifyAuthUrl()
+  await handleSpotifyCallback()
+})
 </script>
 
 <template>

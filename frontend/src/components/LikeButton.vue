@@ -35,29 +35,29 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { useLikeStore } from '@/stores/likeStore';
-import { usePostStore } from '@/stores/postStore';
+import { ref } from 'vue'
+import { useLikeStore } from '@/stores/likeStore'
+import { usePostStore } from '@/stores/postStore'
 
 const props = defineProps({
   postId: {
     type: Number,
-    required: true,
+    required: true
   },
   initialLikes: {
     type: Number,
-    required: true,
-  },
-});
+    required: true
+  }
+})
 
-const likeStore = useLikeStore();
-const postStore = usePostStore();
-const likes = ref(props.initialLikes);
-const liked = ref(postStore.likedPosts.includes(props.postId));
+const likeStore = useLikeStore()
+const postStore = usePostStore()
+const likes = ref(props.initialLikes)
+const liked = ref(postStore.likedPosts.includes(props.postId))
 
 const toggleLike = async () => {
-  await likeStore.toggleLike(props.postId, liked.value);
-  liked.value = !liked.value;
-  likes.value += liked.value ? 1 : -1;
-};
+  await likeStore.toggleLike(props.postId, liked.value)
+  liked.value = !liked.value
+  likes.value += liked.value ? 1 : -1
+}
 </script>

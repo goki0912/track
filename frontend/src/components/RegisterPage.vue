@@ -25,10 +25,10 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from 'axios'
 
 export default {
-  data() {
+  data () {
     return {
       name: '',
       email: '',
@@ -37,19 +37,19 @@ export default {
     }
   },
   methods: {
-    async register() {
+    async register () {
       try {
         await axios.post('/register', {
           name: this.name,
           email: this.email,
           password: this.password,
           password_confirmation: this.password_confirmation
-        });
-        alert('Registered successfully');
-        this.$router.push('/');
+        })
+        alert('Registered successfully')
+        this.$router.push('/')
       } catch (error) {
-        console.error(error);
-        alert('Registration failed');
+        console.error(error)
+        alert('Registration failed')
       }
     }
   }

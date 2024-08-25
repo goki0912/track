@@ -22,38 +22,38 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue';
-import { usePostStore } from '@/stores/postStore';
-import { Post } from '@/types';
-import LikeButton from "@/components/LikeButton.vue";
-import axios from "axios";
+import { ref, onMounted, watch } from 'vue'
+import { usePostStore } from '@/stores/postStore'
+import { Post } from '@/types'
+import LikeButton from '@/components/LikeButton.vue'
+import axios from 'axios'
 
-const postStore = usePostStore();
-const posts = ref<Post[]>([]);
-const currentUser = ref<{ id: number, name: string } | null>(null);
+const postStore = usePostStore()
+const posts = ref<Post[]>([])
+const currentUser = ref<{ id: number, name: string } | null>(null)
 
 onMounted(async () => {
-  await postStore.fetchPosts();
-  await fetchCurrentUser();
-});
+  await postStore.fetchPosts()
+  await fetchCurrentUser()
+})
 
 // postStoreのpostsが更新されたときに自動的に反映されるようにwatchを使う
 watch(() => postStore.posts, (newPosts) => {
-  posts.value = newPosts;
-});
+  posts.value = newPosts
+})
 
 const playTrack = async (trackUri: string) => {
   try {
-    const accessToken = sessionStorage.getItem('spotify_access_token');
+    const accessToken = sessionStorage.getItem('spotify_access_token')
     if (!accessToken) {
-      console.error('Access token not found');
-      return;
+      console.error('Access token not found')
+      return
     }
     const device = await axios.get('spotify/devices', {
       headers: {
         spotifyAuthorization: `Bearer ${accessToken}`
       }
-    });
+    })
     const response = await axios.post('spotify/play-track', {
       device_id: device.data.devices[0].id,
       uri: trackUri
@@ -63,41 +63,41 @@ const playTrack = async (trackUri: string) => {
         spotifyAuthorization: `Bearer ${accessToken}`
       }
     }
-    );
+    )
     if (response.status === 200) {
-      console.log('Track is playing');
+      console.log('Track is playing')
     } else {
-      console.log('Failed to play track', response.status);
+      console.log('Failed to play track', response.status)
     }
   } catch (error) {
-    console.error('Error playing track', error);
+    console.error('Error playing track', error)
   }
-};
+}
 const fetchCurrentUser = async () => {
   try {
-    const response = await axios.get('/user');
-    currentUser.value = response.data;
+    const response = await axios.get('/user')
+    currentUser.value = response.data
   } catch (error) {
-    console.error('Error fetching current user', error);
+    console.error('Error fetching current user', error)
   }
-};
+}
 const deletePost = async (postId: number) => {
   if (!confirm('本当にこの投稿を削除しますか？')) {
-    return;
+    return
   }
   try {
-    const response = await axios.delete(`spotify/posts/${postId}`);
+    const response = await axios.delete(`spotify/posts/${postId}`)
     if (response.status === 200) {
-      posts.value = posts.value.filter(post => post.id !== postId);
-      alert('削除が完了しました');
-      console.log('Post deleted successfully');
+      posts.value = posts.value.filter(post => post.id !== postId)
+      alert('削除が完了しました')
+      console.log('Post deleted successfully')
     } else {
-      console.log('Failed to delete post', response.status);
+      console.log('Failed to delete post', response.status)
     }
   } catch (error) {
-    console.error('Error deleting post', error);
+    console.error('Error deleting post', error)
   }
-};
+}
 
 </script>
 

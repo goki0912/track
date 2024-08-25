@@ -7,5 +7,5 @@
 </template>
 
 <script lang="ts" setup>
-import SideMenu from './components/SideMenu.vue';
+import SideMenu from './components/SideMenu.vue'
 </script>

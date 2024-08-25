@@ -35,31 +35,31 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import axios from 'axios';
-import { usePostStore } from '@/stores/postStore';
-import { SpotifyTrack, Track } from '@/types';
-import BaseModal from "@/components/BaseModal.vue";
+import { ref } from 'vue'
+import axios from 'axios'
+import { usePostStore } from '@/stores/postStore'
+import { SpotifyTrack, Track } from '@/types'
+import BaseModal from '@/components/BaseModal.vue'
 
-const searchQuery = ref<string>('');
-const searchResults = ref<SpotifyTrack[]>([]);
-const selectedTrack = ref<SpotifyTrack | null>(null);
-const postStore = usePostStore();
-const isModalOpen = ref(false);
+const searchQuery = ref<string>('')
+const searchResults = ref<SpotifyTrack[]>([])
+const selectedTrack = ref<SpotifyTrack | null>(null)
+const postStore = usePostStore()
+const isModalOpen = ref(false)
 
 const searchTracks = async () => {
   if (searchQuery.value.length > 1) {
-    const response = await axios.get(`/spotify/search?query=${searchQuery.value}`);
-    searchResults.value = response.data.tracks.items;
+    const response = await axios.get(`/spotify/search?query=${searchQuery.value}`)
+    searchResults.value = response.data.tracks.items
   }
-};
+}
 
 const selectTrack = (track: SpotifyTrack) => {
-  selectedTrack.value = track;
-};
+  selectedTrack.value = track
+}
 
 const submitPost = async () => {
-  if (!selectedTrack.value) return;
+  if (!selectedTrack.value) return
 
   const postData: Track = {
     spotify_track_id: selectedTrack.value.id,
@@ -68,20 +68,20 @@ const submitPost = async () => {
     album_name: selectedTrack.value.album.name,
     album_image_url: selectedTrack.value.album.images[0]?.url || '',
     uri: selectedTrack.value.uri
-  };
+  }
 
-  await postStore.createPost(postData);
-  closeModal();
-  selectedTrack.value = null;
-  searchQuery.value = '';
-  searchResults.value = [];
-};
+  await postStore.createPost(postData)
+  closeModal()
+  selectedTrack.value = null
+  searchQuery.value = ''
+  searchResults.value = []
+}
 
 const openModal = () => {
-  isModalOpen.value = true;
-};
+  isModalOpen.value = true
+}
 
 const closeModal = () => {
-  isModalOpen.value = false;
-};
+  isModalOpen.value = false
+}
 </script>

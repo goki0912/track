@@ -1,23 +1,23 @@
 <script lang="ts" setup>
-import Logout from "@/components/LogoutPage.vue";
-import { ref, computed } from 'vue';
-import {useRoute} from "vue-router";
+import Logout from '@/components/LogoutPage.vue'
+import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
 
 const menuItems = ref([
   { name: 'Home', path: '/home' },
   { name: 'Profile', path: '/profile' },
-  { name: 'Settings', path: '/settings' },
+  { name: 'Settings', path: '/settings' }
   // 他のメニュー項目もここに追加できます
-]);
+])
 
-const isMenuOpen = ref(false);
+const isMenuOpen = ref(false)
 
-const route = useRoute();
-const hideMenuRoute = ['/login', '/register'];
-const showMenu = computed(() => !hideMenuRoute.includes(route.path));
+const route = useRoute()
+const hideMenuRoute = ['/login', '/register']
+const showMenu = computed(() => !hideMenuRoute.includes(route.path))
 const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
-};
+  isMenuOpen.value = !isMenuOpen.value
+}
 </script>
 
 <template>
