@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SpotifyController extends Controller
 {
@@ -23,7 +25,7 @@ class SpotifyController extends Controller
     public function getAuthUrl(): JsonResponse
     {
 //        もっと色々許可する？
-        $scopes = 'user-read-private user-read-email';
+        $scopes = 'user-read-private user-read-email user-modify-playback-state user-read-playback-state';
 
         $url = 'https://accounts.spotify.com/authorize?' . http_build_query([
                 'response_type' => 'code',
@@ -35,7 +37,7 @@ class SpotifyController extends Controller
         return response()->json(['url' => $url]);
     }
 
-    public function handleCallback(Request $request)
+    public function handleCallback(Request $request): JsonResponse
     {
         $code = $request->query('code');
 
@@ -58,9 +60,14 @@ class SpotifyController extends Controller
     {
         $accessToken = $request->header('spotifyAuthorization');
 
-        $response = Http::withHeaders([
-            'Authorization' => $accessToken,
-        ])->get('https://api.spotify.com/v1/me');
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $accessToken,
+            ])->get('https://api.spotify.com/v1/me');
+        } catch (ConnectionException $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Failed to connect to Spotify API'], 500);
+        }
 
         return response()->json($response->json());
     }
@@ -97,16 +104,66 @@ class SpotifyController extends Controller
 
         $accessToken = $this->getAccessToken();
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $accessToken,
-        ])->get('https://api.spotify.com/v1/search', [
-            'q' => $query,
-            'type' => 'track',
-            'limit' => 10, // 検索結果の最大数を指定
-            'market' => 'JP', // 日本の楽曲を対象にする
-        ]);
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $accessToken,
+            ])->get('https://api.spotify.com/v1/search', [
+                'q' => $query,
+                'type' => 'track',
+                'limit' => 10, // 検索結果の最大数を指定
+                'market' => 'JP', // 日本の楽曲を対象にする
+            ]);
+        } catch (ConnectionException $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Failed to connect to Spotify API'], 500);
+        }
 
         return response()->json($response->json());
+    }
+
+    public function getDevices(Request $request): JsonResponse
+    {
+        $accessToken = $request->header('spotifyAuthorization');
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $accessToken,
+            ])->get('https://api.spotify.com/v1/me/player/devices');
+        } catch (ConnectionException $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Failed to connect to Spotify API'], 500);
+        }
+
+        if ($response->successful()) {
+            return response()->json($response->json());
+        }
+
+        return response()->json(['message' => 'Failed to get devices', 'error' => $response->body()], 500);
+    }
+    public function playTrack(Request $request): JsonResponse
+    {
+        $accessToken = $request->header('spotifyAuthorization');
+        $trackUri = $request->input('uri');
+        $deviceId = $request->input('device_id');
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $accessToken,
+                'Content-Type' => 'application/json',
+            ])->withOptions([
+                'query' => ['device_id' => $deviceId],
+            ])->put('https://api.spotify.com/v1/me/player/play', [
+                'uris' => [$trackUri],
+            ]);
+        } catch (ConnectionException $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Failed to connect to Spotify API'], 500);
+        }
+
+        if ($response->successful()) {
+            return response()->json(['message' => 'Track is playing'], 200);
+        }
+
+        return response()->json(['message' => 'Failed to play track', 'error' => $response->body()], 500);
     }
 
 }
