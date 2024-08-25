@@ -1,18 +1,18 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-export const useAuthStore = defineStore('auth', {
+export const useAuthStore = defineStore("auth", {
   state: () => ({
-    isAuthenticated: false
+    isAuthenticated: false,
   }),
   actions: {
-    login () {
-      this.isAuthenticated = true
+    login() {
+      this.isAuthenticated = true;
     },
-    logout () {
-      this.isAuthenticated = false
+    logout() {
+      this.isAuthenticated = false;
     },
-    checkAuth () {
-      this.isAuthenticated = document.cookie.includes('isAuthenticated=true')
-    }
-  }
-})
+    checkAuth() {
+      this.isAuthenticated = document.cookie.includes("isAuthenticated=true");
+    },
+  },
+});

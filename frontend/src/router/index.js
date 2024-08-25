@@ -1,58 +1,64 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from '../components/HomePage.vue'
-import LoginPage from '@/components/LoginPage.vue'// ホームページ用のコンポーネントを作成します
-import RegisterPage from '@/components/RegisterPage.vue'
-import ProfilePage from '@/components/ProfilePage.vue'
-import { useAuthStore } from '@/stores/auth'
+import { createRouter, createWebHistory } from "vue-router";
+import HomePage from "../components/HomePage.vue";
+import LoginPage from "@/components/LoginPage.vue"; // ホームページ用のコンポーネントを作成します
+import RegisterPage from "@/components/RegisterPage.vue";
+import ProfilePage from "@/components/ProfilePage.vue";
+import { useAuthStore } from "@/stores/auth";
 
 const routes = [
   {
-    path: '/login',
+    path: "/login",
     component: LoginPage,
     meta: {
       requiresAuth: false,
-      guestOnly: true
-    }
+      guestOnly: true,
+    },
   },
   {
-    path: '/register',
+    path: "/register",
     component: RegisterPage,
     meta: {
       requiresAuth: false,
-      guestOnly: true
-    }
+      guestOnly: true,
+    },
   },
   {
-    path: '/home',
+    path: "/home",
     component: HomePage,
     meta: {
-      requiresAuth: true
-    }
+      requiresAuth: true,
+    },
   },
   {
-    path: '/profile',
+    path: "/profile",
     component: ProfilePage,
     meta: {
-      requiresAuth: true
-    }
-  }
-]
+      requiresAuth: true,
+    },
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
-})
+  routes,
+});
 
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore()
-  authStore.checkAuth() // ここで認証状態を確認
-  if (to.matched.some(record => record.meta.requiresAuth) && !authStore.isAuthenticated) {
-    next('/login')
-  } else if (to.matched.some(record => record.meta.guestOnly) && authStore.isAuthenticated) {
-    next('/home')
+  const authStore = useAuthStore();
+  authStore.checkAuth(); // ここで認証状態を確認
+  if (
+    to.matched.some((record) => record.meta.requiresAuth) &&
+    !authStore.isAuthenticated
+  ) {
+    next("/login");
+  } else if (
+    to.matched.some((record) => record.meta.guestOnly) &&
+    authStore.isAuthenticated
+  ) {
+    next("/home");
   } else {
-    next()
+    next();
   }
-})
+});
 
-export default router
+export default router;
