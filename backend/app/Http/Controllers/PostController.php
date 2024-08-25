@@ -7,6 +7,7 @@ use App\Models\Track;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
@@ -71,5 +72,21 @@ class PostController extends Controller
 
         return response()->json(['likes' => $post->likes]);
     }
+
+    public function destroy($id)
+    {
+        $post = Post::findOrFail($id);
+        Log::error(\auth()->user()->id);
+
+        // 現在のユーザーが投稿の所有者であることを確認
+        if (auth()->user()->id !== $post->user_id) {
+            return response()->json(['error' => 'You can only delete your own posts.'], 403);
+        }
+
+        $post->delete();
+
+        return response()->json(['message' => 'Post deleted successfully.'], 200);
+    }
+
 
 }

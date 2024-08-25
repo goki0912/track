@@ -12,6 +12,9 @@
         <button @click="playTrack(post.track.uri)" class="mt-2 bg-blue-500 text-white py-1 px-3 rounded">
           Play
         </button>
+        <button v-if="currentUser && currentUser.id === post.user.id" @click="deletePost(post.id)" class="mt-2 bg-red-600 text-white py-1 px-3 rounded">
+          delete
+        </button>
         <p class="text-gray-500 mt-2">Posted by {{ post.user.name }}</p>
       </div>
     </div>
@@ -27,9 +30,11 @@ import axios from "axios";
 
 const postStore = usePostStore();
 const posts = ref<Post[]>([]);
+const currentUser = ref<{ id: number, name: string } | null>(null);
 
 onMounted(async () => {
   await postStore.fetchPosts();
+  await fetchCurrentUser();
 });
 
 // postStoreのpostsが更新されたときに自動的に反映されるようにwatchを使う
@@ -68,6 +73,32 @@ const playTrack = async (trackUri: string) => {
     console.error('Error playing track', error);
   }
 };
+const fetchCurrentUser = async () => {
+  try {
+    const response = await axios.get('/user');
+    currentUser.value = response.data;
+  } catch (error) {
+    console.error('Error fetching current user', error);
+  }
+};
+const deletePost = async (postId: number) => {
+  if (!confirm('本当にこの投稿を削除しますか？')) {
+    return;
+  }
+  try {
+    const response = await axios.delete(`spotify/posts/${postId}`);
+    if (response.status === 200) {
+      posts.value = posts.value.filter(post => post.id !== postId);
+      alert('削除が完了しました');
+      console.log('Post deleted successfully');
+    } else {
+      console.log('Failed to delete post', response.status);
+    }
+  } catch (error) {
+    console.error('Error deleting post', error);
+  }
+};
+
 </script>
 
 <style scoped>
