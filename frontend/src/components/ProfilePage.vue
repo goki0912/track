@@ -9,26 +9,7 @@ const userProfile = ref<any>(null);
 const router = useRouter();
 const route = useRoute();
 
-const getUserProfile = async () => {
-  if (accessToken.value) {
-    try {
-      const response = await axios.get("/spotify/user-profile", {
-        headers: {
-          // sanctumの認証でAuthorizationヘッダーを使っていたためカスタムヘッダーを使う
-          spotifyAuthorization: `Bearer ${accessToken.value}`,
-        },
-      });
-      // access tokenがexpiredした時のため
-      if (!response.data.error) {
-        userProfile.value = response.data;
-      }
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-    }
-  }
-};
-
-// 認証URLを取得する関数
+// 初回認証用のSpotify認証URLを取得する関数
 const fetchSpotifyAuthUrl = async () => {
   try {
     const response = await axios.get("/spotify/auth-url");
@@ -38,16 +19,19 @@ const fetchSpotifyAuthUrl = async () => {
   }
 };
 
+// Spotify認証後にリダイレクトされる際のコールバック処理
 const handleSpotifyCallback = async () => {
   const code = route.query.code as string;
   if (code) {
     try {
       const response = await axios.get(`/spotify/callback?code=${code}`);
       const token = response.data.access_token;
+      const refreshToken = response.data.refresh_token; // 追加: refresh_tokenの取得
       sessionStorage.setItem("spotify_access_token", token);
+      sessionStorage.setItem("spotify_refresh_token", refreshToken); // 追加: refresh_tokenの保存
       accessToken.value = token;
-      getUserProfile();
-      router.replace({ path: "/profile", query: {} });
+      await getUserProfile();
+      await router.replace({ path: "/profile", query: {} });
     } catch (error) {
       console.error("Error handling Spotify callback:", error);
     }
@@ -55,39 +39,58 @@ const handleSpotifyCallback = async () => {
     const sessionToken = sessionStorage.getItem("spotify_access_token");
     if (sessionToken) {
       accessToken.value = sessionToken;
-      getUserProfile();
+      await getUserProfile();
     }
   }
 };
 
+// プロフィール情報を取得する関数
+const getUserProfile = async () => {
+  if (accessToken.value) {
+    try {
+      const response = await axios.get("/spotify/user-profile", {
+        headers: {
+          spotifyAuthorization: `Bearer ${accessToken.value}`,
+        },
+      });
+      if (!response.data.error) {
+        userProfile.value = response.data;
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  }
+};
+
+// コンポーネントがマウントされた際の処理
 onMounted(async () => {
   await fetchSpotifyAuthUrl();
   await handleSpotifyCallback();
 });
 </script>
-
 <template>
   <div class="min-h-screen flex items-center justify-center bg-green-50">
     <div class="max-w-md w-full bg-white shadow-md rounded-lg p-6">
       <h1 class="text-3xl font-bold text-green-600 mb-4">Profile</h1>
-      <a :href="spotifyAuthUrl" v-if="!userProfile" class="btn btn-primary"
-        >Authenticate with Spotify</a
-      >
+      <!-- 初回認証時のボタン -->
+      <a :href="spotifyAuthUrl" v-if="!userProfile" class="btn btn-primary">
+        Authenticate with Spotify
+      </a>
+      <!-- 認証後にプロフィール情報を表示 -->
       <div v-if="userProfile">
         <h2>Spotify Profile</h2>
         <p><strong>Name:</strong> {{ userProfile.display_name }}</p>
         <p><strong>Email:</strong> {{ userProfile.email }}</p>
         <p><strong>Country:</strong> {{ userProfile.country }}</p>
         <img
-          :src="userProfile.images[0]?.url"
-          alt="Profile Image"
-          v-if="userProfile.images?.length"
+            :src="userProfile.images[0]?.url"
+            alt="Profile"
+            v-if="userProfile.images?.length"
         />
       </div>
     </div>
   </div>
 </template>
-
 <style scoped>
 .btn {
   display: inline-block;
