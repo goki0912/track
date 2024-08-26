@@ -19,6 +19,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/spotify/auth-url', [SpotifyController::class, 'getAuthUrl']);
     Route::get('/spotify/callback', [SpotifyController::class, 'handleCallback']);
     Route::get('/spotify/user-profile', [SpotifyController::class, 'getUserProfile']);
+    Route::post('/spotify/refresh-token', [SpotifyController::class, 'refreshToken']);
 
     Route::get('spotify/search', [SpotifyController::class, 'searchTrack']);
 

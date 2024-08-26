@@ -1,11 +1,12 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import HomePage from "../components/HomePage.vue";
 import LoginPage from "@/components/LoginPage.vue"; // ホームページ用のコンポーネントを作成します
 import RegisterPage from "@/components/RegisterPage.vue";
 import ProfilePage from "@/components/ProfilePage.vue";
 import { useAuthStore } from "@/stores/auth";
+import { useSpotifyStore } from "@/stores/spotify";
 
-const routes = [
+const routes: Array<RouteRecordRaw> = [
   {
     path: "/login",
     component: LoginPage,
@@ -43,21 +44,25 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   authStore.checkAuth(); // ここで認証状態を確認
   if (
     to.matched.some((record) => record.meta.requiresAuth) &&
-    !authStore.isAuthenticated
+      !authStore.isAuthenticated
   ) {
     next("/login");
-  } else if (
-    to.matched.some((record) => record.meta.guestOnly) &&
-    authStore.isAuthenticated
-  ) {
-    next("/home");
   } else {
-    next();
+    const spotifyStore = useSpotifyStore();
+    await spotifyStore.ensureAuthenticated();
+    if (
+      to.matched.some((record) => record.meta.guestOnly) &&
+      authStore.isAuthenticated
+    ) {
+      next("/home");
+    } else {
+      next();
+    }
   }
 });
 

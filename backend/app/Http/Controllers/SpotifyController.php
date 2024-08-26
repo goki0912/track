@@ -53,8 +53,9 @@ class SpotifyController extends Controller
 
         // アクセストークンを取得
         $accessToken = $data['access_token'];
+        $refreshToken = $data['refresh_token'];
         // フロントエンドにJSON形式でトークンを返す
-        return response()->json(['access_token' => $accessToken]);
+        return response()->json(['access_token' => $accessToken, 'refresh_token' => $refreshToken]);
     }
     public function getUserProfile(Request $request): JsonResponse
     {
@@ -64,6 +65,11 @@ class SpotifyController extends Controller
             $response = Http::withHeaders([
                 'Authorization' => $accessToken,
             ])->get('https://api.spotify.com/v1/me');
+
+            // トークンが無効な場合、401 Unauthorizedを返して知らせる
+            if ($response->status() === 401) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
         } catch (ConnectionException $e) {
             Log::error($e->getMessage());
             return response()->json(['message' => 'Failed to connect to Spotify API'], 500);
@@ -166,4 +172,23 @@ class SpotifyController extends Controller
         return response()->json(['message' => 'Failed to play track', 'error' => $response->body()], 500);
     }
 
+    public function refreshToken(Request $request): JsonResponse
+    {
+        $refreshToken = $request->input('refresh_token');
+
+        try {
+            $response = Http::asForm()->post('https://accounts.spotify.com/api/token', [
+                'grant_type' => 'refresh_token',
+                'refresh_token' => $refreshToken,
+                'client_id' => $this->client_id,
+                'client_secret' => $this->client_secret,
+            ]);
+
+            $data = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+            return response()->json($data);
+        } catch (ConnectionException $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Failed to connect to Spotify API'], 500);
+        }
+    }
 }
