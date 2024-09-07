@@ -29,3 +29,6 @@ logs:
 
 cacheclear:
 	$(dco) exec app php artisan optimize:clear
+
+format:
+	$(dco) exec vue npm run format
