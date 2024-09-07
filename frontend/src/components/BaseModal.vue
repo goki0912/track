@@ -5,7 +5,7 @@
     @click.self="closeModal"
   >
     <div
-      class="bg-white p-6 rounded-lg w-1/2 relative max-h-full overflow-y-auto"
+      class="bg-white p-6 rounded-lg w-11/12 relative max-h-full overflow-y-auto"
     >
       <button
         @click="closeModal"

@@ -3,7 +3,7 @@
     <button @click="openModal" class="bg-blue-500 text-white p-2">+</button>
 
     <BaseModal :isOpen="isModalOpen" @close="closeModal">
-      <h2 class="text-2xl font-bold mb-4">Post a new track</h2>
+      <h2 class="text-xl font-bold mb-4">Post a new track</h2>
       <form @submit.prevent="submitPost" class="space-y-6">
         <div>
           <label

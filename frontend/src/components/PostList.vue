@@ -1,35 +1,79 @@
 <template>
-  <div>
+  <div @click="handleClickOutside">
     <h2 class="text-2xl font-bold mb-4">Posts</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <div
         v-for="post in posts"
         :key="post.id"
-        class="mb-4 p-4 border-b border-gray-200 bg-white rounded-lg shadow-md"
+        class="flex items-center p-4 border-b border-gray-200 bg-white rounded-lg shadow-md mx-2"
+        :class="
+          currentUser && currentUser.id === post.user.id ? 'bg-emerald-100' : ''
+        "
       >
-        <h3 class="text-xl font-semibold">
-          {{ post.track.track_name }} by {{ post.track.artist_name }}
-        </h3>
-        <LikeButton :postId="post.id" :initialLikes="post.likes" />
+        <!-- アルバム画像を曲名の前に表示 -->
         <img
           :src="post.track.album_image_url"
           alt="Album Art"
-          class="w-20 h-20 mt-2"
+          class="w-12 h-12 mr-4 rounded"
         />
-        <button
-          @click="playTrack(post.track.uri)"
-          class="mt-2 bg-blue-500 text-white py-1 px-3 rounded"
-        >
-          Play
-        </button>
-        <button
-          v-if="currentUser && currentUser.id === post.user.id"
-          @click="deletePost(post.id)"
-          class="mt-2 bg-red-600 text-white py-1 px-3 rounded"
-        >
-          delete
-        </button>
-        <p class="text-gray-500 mt-2">Posted by {{ post.user.name }}</p>
+        <div class="flex-1">
+          <!-- 曲名とアーティスト名 -->
+          <h3 class="text-base font-semibold">
+            {{ post.track.track_name }} <br />
+            <span class="text-sm text-gray-600">{{
+              post.track.artist_name
+            }}</span>
+          </h3>
+        </div>
+
+        <!-- Likeボタン -->
+        <LikeButton :postId="post.id" :initialLikes="post.likes" />
+
+        <!-- ケバブボタン -->
+        <div class="relative">
+          <button
+            @click="toggleMenu(post.id)"
+            class="ml-2"
+            :ref="(el) => (menuButtonRefs[post.id] = el)"
+          >
+            <!-- ケバブボタン（3つのドット） -->
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v.01M12 12v.01M12 18v.01"
+              ></path>
+            </svg>
+          </button>
+
+          <!-- メニュー (Play, Deleteボタン) -->
+          <div
+            v-if="isMenuOpen(post.id)"
+            class="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
+            :ref="(el) => (menuRefs[post.id] = el)"
+          >
+            <button
+              @click="playTrack(post.track.uri)"
+              class="block w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
+            >
+              Play
+            </button>
+            <button
+              v-if="currentUser && currentUser.id === post.user.id"
+              @click="deletePost(post.id)"
+              class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -115,6 +159,38 @@ const deletePost = async (postId: number) => {
     }
   } catch (error) {
     console.error("Error deleting post", error);
+  }
+};
+
+// 各投稿ごとのメニューとボタンを管理するオブジェクト
+const menuRefs = ref<Record<number, HTMLElement | null>>({});
+const menuButtonRefs = ref<Record<number, HTMLElement | null>>({});
+const openMenuId = ref<number | null>(null);
+
+const toggleMenu = (postId: number) => {
+  if (openMenuId.value === postId) {
+    openMenuId.value = null;
+  } else {
+    openMenuId.value = postId;
+  }
+};
+
+const isMenuOpen = (postId: number) => {
+  return openMenuId.value === postId;
+};
+
+// メニュー外をクリックしたときに閉じる処理
+const handleClickOutside = (event: MouseEvent) => {
+  const menuElement = menuRefs.value[openMenuId.value!];
+  const menuButtonElement = menuButtonRefs.value[openMenuId.value!];
+
+  if (
+    menuElement &&
+    !menuElement.contains(event.target as Node) &&
+    menuButtonElement &&
+    !menuButtonElement.contains(event.target as Node)
+  ) {
+    openMenuId.value = null; // メニューを閉じる
   }
 };
 </script>

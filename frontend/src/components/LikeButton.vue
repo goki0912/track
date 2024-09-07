@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, defineProps } from "vue";
 import { useLikeStore } from "@/stores/likeStore";
 import { usePostStore } from "@/stores/postStore";
 

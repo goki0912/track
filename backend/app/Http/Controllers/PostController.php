@@ -13,7 +13,7 @@ class PostController extends Controller
 {
     public function index(Request $request) :JsonResponse
     {
-        $posts = Post::with(['user', 'track'])->orderBy('created_at', 'desc')->get();
+        $posts = Post::with(['user', 'track'])->orderBy('likes', 'desc')->orderBy('created_at', 'desc')->get();
         if ($request->user()) {
             $likedPosts = $request->user()->likedPosts->pluck('id')->toArray();
         }
