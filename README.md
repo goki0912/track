@@ -1,6 +1,4 @@
-# track sharing SNS
+# track sharing SNS（完全なSPA）
 
-完全なSPA
-
-SSRされたHTMLを使用していないためdebugbar使えなかった😭
+SSRされたHTMLを使用していないためdebugbar使えなかった😭（debugbarはlaravelのサーバーのポートに接続してる時生成されるhtmlに追加されるためvue側のポートでは使えない。もし使いたいならbladeファイルにvueを組み込んでマウントしてファイル一つだけSSRすれば使える。現状はdebugbarなくても困らないからそのまま）
 
