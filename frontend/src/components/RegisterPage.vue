@@ -74,7 +74,7 @@ export default {
           password_confirmation: this.password_confirmation,
         });
         alert("Registered successfully");
-        this.$router.push("/");
+        this.$router.push("/top");
       } catch (error) {
         console.error(error);
         alert("Registration failed");
