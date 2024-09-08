@@ -44,7 +44,7 @@ class PostController extends Controller
 
         return response()->json($post);
     }
-    public function like(Request $request, $id)
+    public function like(Request $request, $id): JsonResponse
     {
         $post = Post::findOrFail($id);
         $user = $request->user();
@@ -59,7 +59,7 @@ class PostController extends Controller
         return response()->json(['likes' => $post->likes]);
     }
 
-    public function unlike(Request $request, $id)
+    public function unlike(Request $request, $id): JsonResponse
     {
         $post = Post::findOrFail($id);
         $user = $request->user();
@@ -73,7 +73,7 @@ class PostController extends Controller
         return response()->json(['likes' => $post->likes]);
     }
 
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         $post = Post::findOrFail($id);
         Log::error(\auth()->user()->id);
