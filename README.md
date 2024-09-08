@@ -1,4 +1,5 @@
-# spotify app
+# track sharing SNS
 
-完全なSPAであり、サーバーサイドレンダリングされたHTMLを使用していないためdebugbarを使っていない
+完全なSPA
+SSRされたHTMLを使用していないためdebugbar使えなかった😭
 
