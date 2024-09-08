@@ -1,6 +1,7 @@
 <template>
   <div @click="handleClickOutside">
-    <h2 class="text-2xl font-bold mb-4">Posts</h2>
+    <h2 class="text-2xl font-bold mb-4">POSTS</h2>
+    <p>おだい</p>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <div
         v-for="post in posts"

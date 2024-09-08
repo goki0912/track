@@ -4,7 +4,7 @@ import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 
 const menuItems = ref([
-  { name: "Home", path: "/home" },
+  { name: "Top", path: "/top" },
   { name: "Profile", path: "/profile" },
   { name: "Settings", path: "/settings" },
   // 他のメニュー項目もここに追加できます

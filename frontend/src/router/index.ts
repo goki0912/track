@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import HomePage from "../components/HomePage.vue";
+import TopPage from "../components/TopPage.vue";
 import LoginPage from "@/components/LoginPage.vue"; // ホームページ用のコンポーネントを作成します
 import RegisterPage from "@/components/RegisterPage.vue";
 import ProfilePage from "@/components/ProfilePage.vue";
@@ -24,8 +24,8 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/home",
-    component: HomePage,
+    path: "/top",
+    component: TopPage,
     meta: {
       requiresAuth: true,
     },
@@ -59,7 +59,7 @@ router.beforeEach(async (to, from, next) => {
       to.matched.some((record) => record.meta.guestOnly) &&
       authStore.isAuthenticated
     ) {
-      next("/home");
+      next("/top");
     } else {
       next();
     }
