@@ -8,13 +8,14 @@ export const usePostStore = defineStore("post", {
     likedPosts: [] as number[],
   }),
   actions: {
-    async fetchPosts() {
-      const response = await axios.get("spotify/posts");
+    async fetchPosts(theme_id: number) {
+      const response = await axios.get(`spotify/theme/${theme_id}/posts`);
       this.posts = response.data.posts;
+
       this.likedPosts = response.data.likedPosts;
     },
-    async createPost(track: Track) {
-      await axios.post("spotify/posts", track);
+    async createPost(theme_id: number, track: Track) {
+      await axios.post(`spotify/theme/${theme_id}/posts`, track);
       await this.fetchPosts();
     },
   },

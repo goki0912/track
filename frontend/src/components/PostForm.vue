@@ -100,7 +100,7 @@ const submitPost = async () => {
     uri: selectedTrack.value.uri,
   };
 
-  await postStore.createPost(postData);
+  await postStore.createPost(theme_id, postData);
   closeModal();
   selectedTrack.value = null;
   searchQuery.value = "";

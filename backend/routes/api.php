@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SpotifyController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ThemeController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -23,8 +24,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('spotify/search', [SpotifyController::class, 'searchTrack']);
 
-    Route::get('spotify/posts', [PostController::class, 'index']);
-    Route::post('spotify/posts', [PostController::class, 'store']);
+    Route::get('spotify/theme/{theme_id}/posts', [PostController::class, 'index']);
+
+    Route::post('spotify/theme/{theme_id}/posts', [PostController::class, 'store']);
     Route::delete('spotify/posts/{id}', [PostController::class, 'destroy']);
 
     Route::post('/posts/{id}/like', [PostController::class, 'like']);
@@ -32,6 +34,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('/spotify/devices', [SpotifyController::class, 'getDevices']);
     Route::post('spotify/play-track', [SpotifyController::class, 'playTrack']);
+
+    //全テーマ取得
+    Route::get('spotify/themes', [ThemeController::class, 'index']);
 });
 
 
