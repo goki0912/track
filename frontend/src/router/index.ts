@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import HomePage from "../components/HomePage.vue";
+import TopPage from "../components/TopPage.vue";
 import LoginPage from "@/components/LoginPage.vue"; // ホームページ用のコンポーネントを作成します
 import RegisterPage from "@/components/RegisterPage.vue";
 import ProfilePage from "@/components/ProfilePage.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useSpotifyStore } from "@/stores/spotify";
+import ThemeList from "@/components/ThemeList.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -24,8 +25,8 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/home",
-    component: HomePage,
+    path: "/top",
+    component: TopPage,
     meta: {
       requiresAuth: true,
     },
@@ -37,6 +38,20 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: true,
     },
   },
+  {
+    path: "/theme",
+    component: ThemeList,
+    meta: {
+        requiresAuth: true,
+    }
+  },
+  {
+    path: "/theme/:id",
+    component: TopPage,
+    meta: {
+        requiresAuth: true,
+    }
+  }
 ];
 
 const router = createRouter({
@@ -47,8 +62,12 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   authStore.checkAuth(); // ここで認証状態を確認
+  // 存在しないページにアクセスした場合/loginへ
+  if (!to.matched.length) {
+    next("/login");
+  }
   if (
-    to.matched.some((record) => record.meta.requiresAuth) &&
+      to.matched.some((record) => record.meta.requiresAuth) &&
       !authStore.isAuthenticated
   ) {
     next("/login");
@@ -59,7 +78,7 @@ router.beforeEach(async (to, from, next) => {
       to.matched.some((record) => record.meta.guestOnly) &&
       authStore.isAuthenticated
     ) {
-      next("/home");
+      next("/top");
     } else {
       next();
     }

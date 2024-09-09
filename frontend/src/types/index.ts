@@ -34,3 +34,8 @@ export interface Post {
   created_at: string;
   updated_at: string;
 }
+
+// Themeの型定義
+export interface Theme {
+  title: string;
+}

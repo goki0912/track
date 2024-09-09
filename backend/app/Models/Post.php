@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,6 +15,7 @@ class Post extends Model
         'content',
         'track_id',
         'user_id',
+        'theme_id',
         'likes',
     ];
 
@@ -25,10 +27,13 @@ class Post extends Model
     {
         return $this->belongsTo(Track::class);
     }
-    public function likes()
+    public function likes(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'post_user_likes')->withTimestamps();
     }
-
+    public function theme(): BelongsTo
+    {
+        return $this->belongsTo(Theme::class);
+    }
 
 }

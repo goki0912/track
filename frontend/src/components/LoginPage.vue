@@ -64,7 +64,7 @@ export default {
         document.cookie = "isAuthenticated=true; path=/"; // 認証情報をCookieに保存
         alert("Logged in successfully");
         authStore.login(); // 認証状態を更新
-        this.$router.push("/home");
+        this.$router.push("/top");
       } catch (error) {
         console.error(error);
         alert("Login failed");

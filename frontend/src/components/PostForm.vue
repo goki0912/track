@@ -1,6 +1,8 @@
 <template>
   <div>
-    <button @click="openModal" class="bg-blue-500 text-white p-2">+</button>
+    <button @click="openModal" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white p-4 rounded-full">
+      POST A TRACK
+    </button>
 
     <BaseModal :isOpen="isModalOpen" @close="closeModal">
       <h2 class="text-xl font-bold mb-4">Post a new track</h2>
@@ -98,7 +100,7 @@ const submitPost = async () => {
     uri: selectedTrack.value.uri,
   };
 
-  await postStore.createPost(postData);
+  await postStore.createPost(theme_id, postData);
   closeModal();
   selectedTrack.value = null;
   searchQuery.value = "";

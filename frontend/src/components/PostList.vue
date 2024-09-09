@@ -1,6 +1,7 @@
 <template>
   <div @click="handleClickOutside">
-    <h2 class="text-2xl font-bold mb-4">Posts</h2>
+    <h2 class="text-2xl font-bold mb-4">POSTS</h2>
+    <p>{{ themeTitle }}</p>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <div
         v-for="post in posts"
@@ -80,22 +81,46 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, watch, onBeforeMount, onMounted } from "vue";
 import { usePostStore } from "@/stores/postStore";
+import { useThemeStore } from "@/stores/themeStore";
 import { Post } from "@/types";
-import LikeButton from "@/components/LikeButton.vue";
 import axios from "axios";
+import { useRoute } from "vue-router";
+import LikeButton from "@/components/LikeButton.vue";
 
+// ストアの使用と状態管理
 const postStore = usePostStore();
+const themeStore = useThemeStore();
 const posts = ref<Post[]>([]);
 const currentUser = ref<{ id: number; name: string } | null>(null);
+const themeTitle = ref("");
 
-onMounted(async () => {
-  await postStore.fetchPosts();
+// ルートから themeId を取得
+const route = useRoute();
+const themeId: number = Number(route.params.id);
+
+// ユーザー情報を取得する関数
+const fetchCurrentUser = async () => {
+  try {
+    const response = await axios.get("/user");
+    currentUser.value = response.data;
+  } catch (error) {
+    console.error("Error fetching current user", error);
+  }
+};
+
+// テーマと投稿を初期化する処理
+onBeforeMount(async () => {
   await fetchCurrentUser();
+  await themeStore.fetchThemes();
+  themeTitle.value =
+    themeStore.themes.find((theme) => theme.id === themeId)?.title ||
+    "Unknown Theme";
+  await postStore.fetchPosts(themeId);
 });
 
-// postStoreのpostsが更新されたときに自動的に反映されるようにwatchを使う
+// 投稿の更新を watch してリアクティブに管理
 watch(
   () => postStore.posts,
   (newPosts) => {
@@ -103,6 +128,7 @@ watch(
   },
 );
 
+// Spotifyトラックを再生する関数
 const playTrack = async (trackUri: string) => {
   try {
     const accessToken = sessionStorage.getItem("spotify_access_token");
@@ -110,11 +136,11 @@ const playTrack = async (trackUri: string) => {
       console.error("Access token not found");
       return;
     }
+
     const device = await axios.get("spotify/devices", {
-      headers: {
-        spotifyAuthorization: `Bearer ${accessToken}`,
-      },
+      headers: { spotifyAuthorization: `Bearer ${accessToken}` },
     });
+
     const response = await axios.post(
       "spotify/play-track",
       {
@@ -122,11 +148,10 @@ const playTrack = async (trackUri: string) => {
         uri: trackUri,
       },
       {
-        headers: {
-          spotifyAuthorization: `Bearer ${accessToken}`,
-        },
+        headers: { spotifyAuthorization: `Bearer ${accessToken}` },
       },
     );
+
     if (response.status === 200) {
       console.log("Track is playing");
     } else {
@@ -136,18 +161,13 @@ const playTrack = async (trackUri: string) => {
     console.error("Error playing track", error);
   }
 };
-const fetchCurrentUser = async () => {
-  try {
-    const response = await axios.get("/user");
-    currentUser.value = response.data;
-  } catch (error) {
-    console.error("Error fetching current user", error);
-  }
-};
+
+// 投稿を削除する関数
 const deletePost = async (postId: number) => {
   if (!confirm("本当にこの投稿を削除しますか？")) {
     return;
   }
+
   try {
     const response = await axios.delete(`spotify/posts/${postId}`);
     if (response.status === 200) {
@@ -162,24 +182,20 @@ const deletePost = async (postId: number) => {
   }
 };
 
-// 各投稿ごとのメニューとボタンを管理するオブジェクト
+// 投稿モーダル管理
 const menuRefs = ref<Record<number, HTMLElement | null>>({});
 const menuButtonRefs = ref<Record<number, HTMLElement | null>>({});
 const openMenuId = ref<number | null>(null);
 
+// モーダルの開閉をトグルする
 const toggleMenu = (postId: number) => {
-  if (openMenuId.value === postId) {
-    openMenuId.value = null;
-  } else {
-    openMenuId.value = postId;
-  }
+  openMenuId.value = openMenuId.value === postId ? null : postId;
 };
 
-const isMenuOpen = (postId: number) => {
-  return openMenuId.value === postId;
-};
+// モーダルが開いているかを確認
+const isMenuOpen = (postId: number) => openMenuId.value === postId;
 
-// メニュー外をクリックしたときに閉じる処理
+// モーダル外クリック時にモーダルを閉じる処理
 const handleClickOutside = (event: MouseEvent) => {
   const menuElement = menuRefs.value[openMenuId.value!];
   const menuButtonElement = menuButtonRefs.value[openMenuId.value!];
@@ -190,7 +206,7 @@ const handleClickOutside = (event: MouseEvent) => {
     menuButtonElement &&
     !menuButtonElement.contains(event.target as Node)
   ) {
-    openMenuId.value = null; // メニューを閉じる
+    openMenuId.value = null;
   }
 };
 </script>
