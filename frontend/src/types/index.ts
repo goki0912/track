@@ -37,5 +37,6 @@ export interface Post {
 
 // Themeの型定義
 export interface Theme {
+  id: number;
   title: string;
 }

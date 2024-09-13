@@ -66,6 +66,7 @@
 import { ref } from "vue";
 import axios from "axios";
 import { usePostStore } from "@/stores/postStore";
+import { useRoute } from "vue-router";
 import { SpotifyTrack, Track } from "@/types";
 import BaseModal from "@/components/BaseModal.vue";
 
@@ -74,6 +75,9 @@ const searchResults = ref<SpotifyTrack[]>([]);
 const selectedTrack = ref<SpotifyTrack | null>(null);
 const postStore = usePostStore();
 const isModalOpen = ref(false);
+
+const route = useRoute();
+const themeId: number = Number(route.params.id);
 
 const searchTracks = async () => {
   if (searchQuery.value.length > 1) {
@@ -100,7 +104,7 @@ const submitPost = async () => {
     uri: selectedTrack.value.uri,
   };
 
-  await postStore.createPost(theme_id, postData);
+  await postStore.createPost(themeId, postData);
   closeModal();
   selectedTrack.value = null;
   searchQuery.value = "";
