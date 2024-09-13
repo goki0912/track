@@ -27,7 +27,7 @@ const toggleMenu = () => {
       class="hidden md:block md:w-56 bg-green-700 text-white min-h-screen"
     >
       <div class="p-4">
-        <h2 class="text-2xl font-bold">Menu</h2>
+        <h2 class="text-2xl font-bold">Track.com</h2>
         <ul>
           <li v-for="item in menuItems" :key="item.path" class="my-2">
             <a
@@ -45,7 +45,7 @@ const toggleMenu = () => {
         v-if="showMenu"
         class="md:hidden bg-green-700 p-4 text-white flex justify-between items-center"
       >
-        <h2 class="text-2xl font-bold">Menu</h2>
+        <h2 class="text-2xl font-bold">Track.com</h2>
         <button @click="toggleMenu" class="focus:outline-none">
           <svg
             class="w-6 h-6"

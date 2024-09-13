@@ -41,6 +41,11 @@ class PostController extends Controller
             $data
         );
 
+        // Postテーブルで theme_id と track_id の組み合わせがユニークかどうかをチェック
+        if (Post::where('theme_id', $theme_id)->where('track_id', $track->id)->exists()) {
+            return response()->json(['error' => 'This track is already registered for this theme.'], 422);
+        }
+
         $post = Post::create([
             'user_id' => Auth::id(),
             'track_id' => $track->id,

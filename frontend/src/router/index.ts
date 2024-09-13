@@ -39,19 +39,19 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/theme",
+    path: "/theme/list",
     component: ThemeList,
     meta: {
-        requiresAuth: true,
-    }
+      requiresAuth: true,
+    },
   },
   {
-    path: "/theme/:id",
+    path: "/theme/:id/posts",
     component: TopPage,
     meta: {
-        requiresAuth: true,
-    }
-  }
+      requiresAuth: true,
+    },
+  },
 ];
 
 const router = createRouter({
@@ -67,7 +67,7 @@ router.beforeEach(async (to, from, next) => {
     next("/login");
   }
   if (
-      to.matched.some((record) => record.meta.requiresAuth) &&
+    to.matched.some((record) => record.meta.requiresAuth) &&
       !authStore.isAuthenticated
   ) {
     next("/login");
@@ -78,7 +78,7 @@ router.beforeEach(async (to, from, next) => {
       to.matched.some((record) => record.meta.guestOnly) &&
       authStore.isAuthenticated
     ) {
-      next("/top");
+      next("/theme/list");
     } else {
       next();
     }

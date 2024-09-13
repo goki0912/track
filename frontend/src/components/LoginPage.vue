@@ -36,24 +36,23 @@
   </div>
 </template>
 
-
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
-import axios from 'axios';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
-const email = ref('');
-const password = ref('');
+const email = ref("");
+const password = ref("");
 const authStore = useAuthStore();
 const router = useRouter();
 
 const login = async () => {
   try {
-    await axios.get('http://localhost:8000/sanctum/csrf-cookie'); // CSRFトークンを取得
-    const response = await axios.post('/login', {
+    await axios.get("http://localhost:8000/sanctum/csrf-cookie"); // CSRFトークンを取得
+    const response = await axios.post("/login", {
       email: email.value,
       password: password.value,
     });
@@ -61,14 +60,14 @@ const login = async () => {
     const token = response.data.access_token;
     axios.defaults.headers.common.Authorization = `Bearer ${token}`;
     document.cookie = `token=${token}; path=/`; // トークンをCookieに保存
-    document.cookie = 'isAuthenticated=true; path=/'; // 認証情報をCookieに保存
+    document.cookie = "isAuthenticated=true; path=/"; // 認証情報をCookieに保存
 
-    alert('Logged in successfully');
+    alert("Logged in successfully");
     authStore.login(); // 認証状態を更新
-    router.push('/theme/list');
+    router.push("/theme/list");
   } catch (error) {
     console.error(error);
-    alert('Login failed');
+    alert("Login failed");
   }
 };
 </script>
