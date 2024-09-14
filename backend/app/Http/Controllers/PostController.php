@@ -27,32 +27,38 @@ class PostController extends Controller
 
     public function store($theme_id, Request $request): JsonResponse
     {
-        $data = $request->validate([
-            'spotify_track_id' => 'required|string',
-            'track_name' => 'required|string',
-            'artist_name' => 'required|string',
-            'album_name' => 'required|string',
-            'album_image_url' => 'required|string',
-            'uri' => 'required|string',
-        ]);
+        try {
+            $data = $request->validate([
+                'spotify_track_id' => 'required|string',
+                'track_name' => 'required|string',
+                'artist_name' => 'required|string',
+                'album_name' => 'required|string',
+                'album_image_url' => 'required|string',
+                'uri' => 'required|string',
+            ]);
 
-        $track = Track::firstOrCreate(
-            ['spotify_track_id' => $data['spotify_track_id']],
-            $data
-        );
+            $track = Track::firstOrCreate(
+                ['spotify_track_id' => $data['spotify_track_id']],
+                $data
+            );
 
-        // Postテーブルで theme_id と track_id の組み合わせがユニークかどうかをチェック
-        if (Post::where('theme_id', $theme_id)->where('track_id', $track->id)->exists()) {
-            return response()->json(['error' => 'This track is already registered for this theme.'], 422);
+            // Postテーブルで theme_id と track_id の組み合わせがユニークかどうかをチェック
+            if (Post::where('theme_id', $theme_id)->where('track_id', $track->id)->exists()) {
+                return response()->json(['error' => 'This track is already registered for this theme.'], 422);
+            }
+
+            $post = Post::create([
+                'user_id' => Auth::id(),
+                'track_id' => $track->id,
+                'theme_id' => $theme_id,
+            ]);
+
+            return response()->json($post);
+
+        } catch (\Exception $e) {
+            Log::error($e);
+            return response()->json(['error' => 'Failed to create post.'], 500);
         }
-
-        $post = Post::create([
-            'user_id' => Auth::id(),
-            'track_id' => $track->id,
-            'theme_id' => $theme_id,
-        ]);
-
-        return response()->json($post);
     }
     public function like(Request $request, $id): JsonResponse
     {
