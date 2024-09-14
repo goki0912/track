@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->unique(['theme_id', 'track_id']);
+            $table->unique(['track_id', 'theme_id'], 'track_theme_unique');
+            $table->unique(['user_id', 'theme_id'], 'user_theme_unique');
         });
     }
 
@@ -22,7 +23,14 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->dropUnique(['theme_id', 'track_id']);
+            // 外部キー制約を削除
+            $table->dropForeign('posts_track_id_foreign');
+            $table->dropForeign('posts_theme_id_foreign');
+            $table->dropForeign('posts_user_id_foreign');
+
+            // ユニークインデックスを削除
+            $table->dropUnique('track_theme_unique');
+            $table->dropUnique('user_theme_unique');
         });
     }
 };
