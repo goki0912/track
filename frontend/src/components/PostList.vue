@@ -108,7 +108,7 @@ import { ref, computed, onBeforeMount } from "vue";
 import { usePostStore } from "@/stores/postStore";
 import { useThemeStore } from "@/stores/themeStore";
 import { Post } from "@/types";
-import axios, {post} from "axios";
+import axios, { post } from "axios";
 import { useRoute } from "vue-router";
 import LikeButton from "@/components/LikeButton.vue";
 
@@ -122,7 +122,7 @@ const currentUserPost = computed(() => {
     return null;
   }
   return posts.value.find((post) => post.user_id === currentUser.value?.id);
-    }
+},
 );
 const themeTitle = ref("");
 

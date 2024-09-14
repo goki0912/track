@@ -32,8 +32,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
-import { defineProps } from "vue";
+import { computed, defineProps } from "vue";
 import { useLikeStore } from "@/stores/likeStore";
 import { usePostStore } from "@/stores/postStore";
 

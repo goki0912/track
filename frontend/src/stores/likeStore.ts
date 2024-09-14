@@ -18,7 +18,7 @@ export const useLikeStore = defineStore("like", {
         if (liked) {
           await axios.post(`/posts/${postId}/unlike`);
           postStore.likedPosts = postStore.likedPosts.filter(
-              (id) => id !== postId,
+            (id) => id !== postId,
           );
         } else {
           await axios.post(`/posts/${postId}/like`);
@@ -34,6 +34,6 @@ export const useLikeStore = defineStore("like", {
       } finally {
         this.loadingStates[postId] = false;
       }
-    }
+    },
   },
 });

@@ -25,5 +25,5 @@ export const usePostStore = defineStore("post", {
         console.error("Failed to create a post", error);
       }
     },
-  }
+  },
 });
