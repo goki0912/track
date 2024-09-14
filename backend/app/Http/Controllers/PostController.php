@@ -7,7 +7,9 @@ use App\Models\Track;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\QueryException;
 
 class PostController extends Controller
 {
@@ -15,7 +17,7 @@ class PostController extends Controller
     {
         $posts = Post::with(['user', 'track'])
             ->where('theme_id', $theme_id)
-            ->orderBy('likes', 'desc')
+            ->orderBy('likes_count', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
         if ($request->user()) {
@@ -42,20 +44,43 @@ class PostController extends Controller
                 $data
             );
 
-            // Postテーブルで theme_id と track_id の組み合わせがユニークかどうかをチェック
-            if (Post::where('theme_id', $theme_id)->where('track_id', $track->id)->exists()) {
+            // 現在のユーザーIDを取得
+            $userId = Auth::id();
+
+            // 1. user_id と theme_id の組み合わせがユニークかどうかをチェック
+            if (Post::where('user_id', $userId)
+                ->where('theme_id', $theme_id)
+                ->exists()) {
+                return response()->json(['error' => 'You have already submitted a post for this theme.'], 422);
+            }
+
+            // 2. track_id と theme_id の組み合わせがユニークかどうかをチェック
+            if (Post::where('track_id', $track->id)
+                ->where('theme_id', $theme_id)
+                ->exists()) {
                 return response()->json(['error' => 'This track is already registered for this theme.'], 422);
             }
 
             $post = Post::create([
-                'user_id' => Auth::id(),
+                'user_id' => $userId,
                 'track_id' => $track->id,
                 'theme_id' => $theme_id,
             ]);
 
             return response()->json($post);
 
+        } catch (QueryException $e) {
+            // エラーコードを取得
+            $errorCode = $e->errorInfo[1];
+
+            if ($errorCode === 1062) { // MySQL の場合
+                return response()->json(['error' => 'Duplicate entry detected.'], 422);
+            }
+            // その他のデータベースエラー
+            Log::error($e);
+            return response()->json(['error' => 'Database error occurred.'], 500);
         } catch (\Exception $e) {
+            // その他のエラー
             Log::error($e);
             return response()->json(['error' => 'Failed to create post.'], 500);
         }
@@ -65,14 +90,23 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
         $user = $request->user();
 
-        // すでにいいねしているかチェック
-        if ($post->likes()->where('user_id', $user->id)->exists()) {
-            return response()->json(['message' => 'Already liked'], 400);
-        }
+        DB::beginTransaction();
 
-        $post->likes()->attach($user->id);
-        $post->increment('likes');
-        return response()->json(['likes' => $post->likes]);
+        try {
+            if (!$post->likes()->where('user_id', $user->id)->exists()) {
+                // 中間テーブルにレコードを挿入
+                $post->likes()->attach($user->id);
+                // いいねを1増やす
+                $post->increment('likes_count');
+            }
+
+            DB::commit();
+
+            return response()->json(['likes_count' => $post->likes_count], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'An error occurred'], 500);
+        }
     }
 
     public function unlike(Request $request, $id): JsonResponse
@@ -80,13 +114,23 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
         $user = $request->user();
 
-        // いいねを取り消す
-        if ($post->likes()->where('user_id', $user->id)->exists()) {
-            $post->likes()->detach($user->id);
-            $post->decrement('likes');
-        }
+        DB::beginTransaction();
 
-        return response()->json(['likes' => $post->likes]);
+        try {
+            if ($post->likes()->where('user_id', $user->id)->exists()) {
+                // 中間テーブルのレコードを削除
+                $post->likes()->detach($user->id);
+                // いいねを1減らす
+                $post->decrement('likes_count');
+            }
+
+            DB::commit();
+
+            return response()->json(['likes_count' => $post->likes_count], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'An error occurred'], 500);
+        }
     }
 
     public function destroy($id): JsonResponse

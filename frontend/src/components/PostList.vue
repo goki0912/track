@@ -2,13 +2,36 @@
   <div @click="handleClickOutside">
     <h2 class="text-2xl font-bold mb-4">POSTS</h2>
     <p>{{ themeTitle }}</p>
+    <div
+        v-if="currentUserPost"
+        class="items-center p-4 border-b border-gray-100 rounded-lg mx-2 mb-6 bg-gray-100"
+    >
+      <p>your entry</p>
+      <div class="flex">
+
+        <img
+            :src="currentUserPost.track.album_image_url"
+            alt="Album Art"
+            class="w-12 h-12 mr-4 rounded"
+        />
+        <div class="flex-1">
+          <!-- 曲名とアーティスト名 -->
+          <h3 class="text-base font-semibold">
+            {{ currentUserPost.track.track_name }} <br />
+            <span class="text-sm text-gray-600">{{
+                currentUserPost.track.artist_name
+              }}</span>
+          </h3>
+        </div>
+      </div>
+    </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <div
         v-for="post in posts"
         :key="post.id"
-        class="flex items-center p-4 border-b border-gray-200 bg-white rounded-lg shadow-md mx-2"
+        class="flex items-center p-4 border-b border-gray-200 rounded-lg shadow-md mx-2"
         :class="
-          currentUser && currentUser.id === post.user.id ? 'bg-emerald-100' : ''
+          currentUser && currentUser.id === post.user.id ? 'bg-emerald-100' : 'bg-white'
         "
       >
         <!-- アルバム画像を曲名の前に表示 -->
@@ -81,19 +104,26 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, onBeforeMount, onMounted } from "vue";
+import { ref, computed, onBeforeMount } from "vue";
 import { usePostStore } from "@/stores/postStore";
 import { useThemeStore } from "@/stores/themeStore";
 import { Post } from "@/types";
-import axios from "axios";
+import axios, {post} from "axios";
 import { useRoute } from "vue-router";
 import LikeButton from "@/components/LikeButton.vue";
 
 // ストアの使用と状態管理
 const postStore = usePostStore();
 const themeStore = useThemeStore();
-const posts = ref<Post[]>([]);
+const posts = computed(() => postStore.posts);
 const currentUser = ref<{ id: number; name: string } | null>(null);
+const currentUserPost = computed(() => {
+  if (posts.value.length === 0) {
+    return null;
+  }
+  return posts.value.find((post) => post.user_id === currentUser.value?.id);
+    }
+);
 const themeTitle = ref("");
 
 // ルートから themeId を取得
@@ -105,6 +135,7 @@ const fetchCurrentUser = async () => {
   try {
     const response = await axios.get("/user");
     currentUser.value = response.data;
+    // getCurrentUserPost();
   } catch (error) {
     console.error("Error fetching current user", error);
   }
@@ -119,14 +150,6 @@ onBeforeMount(async () => {
     "Unknown Theme";
   await postStore.fetchPosts(themeId);
 });
-
-// 投稿の更新を watch してリアクティブに管理
-watch(
-  () => postStore.posts,
-  (newPosts) => {
-    posts.value = newPosts;
-  },
-);
 
 // Spotifyトラックを再生する関数
 const playTrack = async (trackUri: string) => {
@@ -208,6 +231,10 @@ const handleClickOutside = (event: MouseEvent) => {
   ) {
     openMenuId.value = null;
   }
+};
+
+const getCurrentUserPost = () => {
+  return posts.value.filter((post) => post.user_id === currentUser.value.id);
 };
 </script>
 
