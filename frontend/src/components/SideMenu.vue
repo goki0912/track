@@ -24,7 +24,7 @@ const toggleMenu = () => {
   <div class="flex bg-green-50">
     <div
       v-if="showMenu"
-      class="hidden md:block md:w-56 bg-green-700 text-white min-h-screen"
+      class="hidden md:block md:w-56 bg-gradient-to-r from-green-500 via-green-400 to-green-300 text-white min-h-screen"
     >
       <div class="p-4">
         <h2 class="text-2xl font-bold">Track.com</h2>
@@ -43,7 +43,7 @@ const toggleMenu = () => {
     <div class="flex-1 bg-green-50">
       <div
         v-if="showMenu"
-        class="md:hidden bg-green-700 p-4 text-white flex justify-between items-center"
+        class="md:hidden bg-gradient-to-r from-green-500 via-green-400 to-green-300 p-4 text-white flex justify-between items-center"
       >
         <h2 class="text-2xl font-bold">Track.com</h2>
         <button @click="toggleMenu" class="focus:outline-none">
@@ -65,7 +65,7 @@ const toggleMenu = () => {
       </div>
       <div
         v-if="showMenu && isMenuOpen"
-        class="md:hidden bg-green-700 text-white p-4"
+        class="md:hidden bg-gradient-to-r from-green-500 via-green-400 to-green-300 text-white p-4"
       >
         <ul>
           <li v-for="item in menuItems" :key="item.path" class="my-2">

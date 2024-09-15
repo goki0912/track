@@ -3,12 +3,12 @@
     <h2 class="text-2xl font-bold mb-4">POSTS</h2>
     <p>{{ themeTitle }}</p>
     <div
-        v-if="currentUserPost"
         class="items-center p-4 border-b border-gray-100 rounded-lg mx-2 mb-6 bg-gray-100"
     >
       <p>your entry</p>
-      <div class="flex">
-
+      <div
+          v-if="currentUserPost"
+          class="flex">
         <img
             :src="currentUserPost.track.album_image_url"
             alt="Album Art"
@@ -23,6 +23,9 @@
               }}</span>
           </h3>
         </div>
+      </div>
+      <div v-else>
+        you have no entry.
       </div>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
