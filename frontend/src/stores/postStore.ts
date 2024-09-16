@@ -20,7 +20,7 @@ export const usePostStore = defineStore("post", {
     async createPost(themeId: number, track: Track) {
       try {
         await axios.post(`spotify/theme/${themeId}/posts`, track);
-        await this.fetchPosts(theme_id);
+        await this.fetchPosts(themeId);
       } catch (error) {
         console.error("Failed to create a post", error);
       }

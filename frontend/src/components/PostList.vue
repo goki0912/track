@@ -110,7 +110,6 @@
 import { ref, computed, onBeforeMount } from "vue";
 import { usePostStore } from "@/stores/postStore";
 import { useThemeStore } from "@/stores/themeStore";
-import { Post } from "@/types";
 import axios, { post } from "axios";
 import { useRoute } from "vue-router";
 import LikeButton from "@/components/LikeButton.vue";
@@ -152,6 +151,20 @@ onBeforeMount(async () => {
     themeStore.themes.find((theme) => theme.id === themeId)?.title ||
     "Unknown Theme";
   await postStore.fetchPosts(themeId);
+
+  // Reverbチャンネルで「いいね」や投稿の更新をリアルタイムでリッスン
+  window.Echo.channel(`theme.${themeId}`)
+      .listen('PostUpdated', (event) => {
+        // イベントで受け取った投稿を更新
+        const updatedPost = posts.value.find(post => post.id === event.postId);
+        if (updatedPost) {
+          updatedPost.likes_count = event.likesCount;
+        }
+      })
+      // .listen('PostCreated', (event) => {
+      //   // 新しい投稿が作成されたらリストに追加
+      //   posts.value.unshift(event.newPost);
+      // });
 });
 
 // Spotifyトラックを再生する関数

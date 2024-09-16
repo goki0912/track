@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql
+    && docker-php-ext-install gd pdo pdo_mysql pcntl
 
 # 作業ディレクトリの設定
 WORKDIR /var/www/html
@@ -19,9 +19,17 @@ WORKDIR /var/www/html
 # コンポーザーのインストール
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# ソースコードのコピーと依存関係のインストール
+# 依存関係のキャッシュ最適化のため、composerファイルだけ先にコピー
+COPY composer.json composer.lock ./
+
+# 依存関係をインストール
+RUN composer install --no-autoloader
+
+# ソースコード全体のコピー
 COPY . .
-RUN composer install
+
+# オートローダーの最適化
+RUN composer dump-autoload --optimize
 
 # パーミッションの設定
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
@@ -30,5 +38,5 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Entrypointスクリプトをエントリポイントに設定
+# Entrypointスクリプトをエントリーポイントに設定
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
