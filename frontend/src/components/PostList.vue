@@ -2,6 +2,7 @@
   <div @click="handleClickOutside">
     <h2 class="text-2xl font-bold mb-4">POSTS</h2>
     <p>{{ themeTitle }}</p>
+    <ReloadButton @reload="postStore.fetchPosts(themeId)" />
     <div
         class="items-center p-4 border-b border-gray-100 rounded-lg mx-2 mb-6 bg-gray-100"
     >
@@ -113,6 +114,7 @@ import { useThemeStore } from "@/stores/themeStore";
 import axios, { post } from "axios";
 import { useRoute } from "vue-router";
 import LikeButton from "@/components/LikeButton.vue";
+import ReloadButton from "@/components/ReloadButton.vue";
 
 // ストアの使用と状態管理
 const postStore = usePostStore();
