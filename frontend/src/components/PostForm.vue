@@ -1,7 +1,7 @@
 <template>
   <div>
-    <button @click="openModal" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white p-4 rounded-full">
-      POST A TRACK
+    <button @click="openModal" class="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-700">
+      + entry
     </button>
 
     <BaseModal :isOpen="isModalOpen" @close="closeModal">
@@ -11,7 +11,7 @@
           <label
             for="track-search"
             class="block text-sm font-medium text-gray-700 mb-2"
-            >Search Spotify:</label
+            >Search:</label
           >
           <input
             v-model="searchQuery"

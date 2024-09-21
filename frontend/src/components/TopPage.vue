@@ -8,6 +8,5 @@ export default defineComponent({
 });
 </script>
 <template>
-  <PostForm></PostForm>
   <PostList></PostList>
 </template>
