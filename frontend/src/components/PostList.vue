@@ -110,10 +110,10 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, computed, onBeforeMount, onMounted, onBeforeUnmount} from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { usePostStore } from "@/stores/postStore";
 import { useThemeStore } from "@/stores/themeStore";
-import axios, { post } from "axios";
+import axios from "axios";
 import { useRoute } from "vue-router";
 import LikeButton from "@/components/LikeButton.vue";
 import ReloadButton from "@/components/ReloadButton.vue";
@@ -158,17 +158,17 @@ onMounted(async () => {
 
     // Reverbチャンネルで「いいね」や投稿の更新をリアルタイムでリッスン
     echoChannel = window.Echo.channel(`theme.${themeId}`)
-        .listen('PostUpdated', (event) => {
-          // イベントで受け取った投稿を更新
-          const updatedPost = posts.value.find(post => post.id === event.postId);
-          if (updatedPost) {
-            updatedPost.likes_count = event.likesCount;
-          }
-        })
-        // .listen('PostCreated', (event) => {
-        //   // 新しい投稿が作成されたらリストに追加
-        //   posts.value.unshift(event.newPost);
-        // });
+      .listen("PostUpdated", (event) => {
+        // イベントで受け取った投稿を更新
+        const updatedPost = posts.value.find(post => post.id === event.postId);
+        if (updatedPost) {
+          updatedPost.likes_count = event.likesCount;
+        }
+      });
+    // .listen('PostCreated', (event) => {
+    //   // 新しい投稿が作成されたらリストに追加
+    //   posts.value.unshift(event.newPost);
+    // });
   } catch (error) {
     console.error("Error during initialization", error);
   } finally {
@@ -181,7 +181,6 @@ onBeforeUnmount(() => {
     echoChannel.unsubscribe();
   }
 });
-
 
 const refreshPosts = async () => {
   loading.value = true;

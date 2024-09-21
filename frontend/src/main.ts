@@ -4,7 +4,7 @@ import "./assets/tailwind.css";
 import router from "./router";
 import axios from "axios";
 import { createPinia } from "pinia";
-import Echo from 'laravel-echo';
+import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 
 axios.defaults.baseURL = "http://localhost/api";
@@ -30,14 +30,14 @@ window.Pusher = Pusher;
 
 // Laravel EchoのReverb設定
 window.Echo = new Echo({
-  broadcaster: 'reverb',
+  broadcaster: "reverb",
   key: process.env.VUE_APP_REVERB_APP_KEY, // .envの設定を使う
-  wsHost: process.env.VUE_APP_REVERB_HOST || 'localhost', // Reverbホスト
+  wsHost: process.env.VUE_APP_REVERB_HOST || "localhost", // Reverbホスト
   wsPort: process.env.VUE_APP_REVERB_PORT || 6001, // WebSocketポートを指定
   wssPort: process.env.VUE_APP_REVERB_PORT || 6001,
   forceTLS: false,
   disableStats: true,
-  enabledTransports: ['ws', 'wss'] // WebSocketプロトコルを使用
+  enabledTransports: ["ws", "wss"], // WebSocketプロトコルを使用
 });
 
 app.use(router);

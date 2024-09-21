@@ -1,6 +1,6 @@
 <script setup lang="ts">
-
-const props = defineProps({
+import { defineProps } from "vue";
+defineProps({
   loading: Boolean,
 });
 </script>
