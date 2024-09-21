@@ -1,14 +1,16 @@
 <template>
-  <div @click="handleClickOutside">
+  <div @click="handleClickOutside" class="h-screen">
+    <LoadingSpinner :loading="loading" />
     <h2 class="text-2xl font-bold mb-4">POSTS</h2>
     <p>{{ themeTitle }}</p>
+    <ReloadButton @reload="refreshPosts" />
     <div
-        v-if="currentUserPost"
         class="items-center p-4 border-b border-gray-100 rounded-lg mx-2 mb-6 bg-gray-100"
     >
       <p>your entry</p>
-      <div class="flex">
-
+      <div
+          v-if="currentUserPost"
+          class="flex">
         <img
             :src="currentUserPost.track.album_image_url"
             alt="Album Art"
@@ -23,6 +25,10 @@
               }}</span>
           </h3>
         </div>
+      </div>
+      <div v-else class="flex justify-between">
+        <p>you have no entry.</p>
+        <PostForm></PostForm>
       </div>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -104,13 +110,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onBeforeMount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { usePostStore } from "@/stores/postStore";
 import { useThemeStore } from "@/stores/themeStore";
-import { Post } from "@/types";
-import axios, { post } from "axios";
+import axios from "axios";
 import { useRoute } from "vue-router";
 import LikeButton from "@/components/LikeButton.vue";
+import ReloadButton from "@/components/ReloadButton.vue";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import PostForm from "@/components/PostForm.vue";
 
 // ストアの使用と状態管理
 const postStore = usePostStore();
@@ -118,12 +126,8 @@ const themeStore = useThemeStore();
 const posts = computed(() => postStore.posts);
 const currentUser = ref<{ id: number; name: string } | null>(null);
 const currentUserPost = computed(() => {
-  if (posts.value.length === 0) {
-    return null;
-  }
   return posts.value.find((post) => post.user_id === currentUser.value?.id);
-},
-);
+});
 const themeTitle = ref("");
 
 // ルートから themeId を取得
@@ -142,14 +146,47 @@ const fetchCurrentUser = async () => {
 };
 
 // テーマと投稿を初期化する処理
-onBeforeMount(async () => {
-  await fetchCurrentUser();
-  await themeStore.fetchThemes();
-  themeTitle.value =
-    themeStore.themes.find((theme) => theme.id === themeId)?.title ||
-    "Unknown Theme";
-  await postStore.fetchPosts(themeId);
+let echoChannel;
+onMounted(async () => {
+  try {
+    await fetchCurrentUser();
+    await themeStore.fetchThemes();
+    themeTitle.value =
+      themeStore.themes.find((theme) => theme.id === themeId)?.title ||
+      "Unknown Theme";
+    await postStore.fetchPosts(themeId);
+
+    // Reverbチャンネルで「いいね」や投稿の更新をリアルタイムでリッスン
+    echoChannel = window.Echo.channel(`theme.${themeId}`)
+      .listen("PostUpdated", (event) => {
+        // イベントで受け取った投稿を更新
+        const updatedPost = posts.value.find(post => post.id === event.postId);
+        if (updatedPost) {
+          updatedPost.likes_count = event.likesCount;
+        }
+      });
+    // .listen('PostCreated', (event) => {
+    //   // 新しい投稿が作成されたらリストに追加
+    //   posts.value.unshift(event.newPost);
+    // });
+  } catch (error) {
+    console.error("Error during initialization", error);
+  } finally {
+    loading.value = false;
+  }
 });
+
+onBeforeUnmount(() => {
+  if (echoChannel) {
+    echoChannel.unsubscribe();
+  }
+});
+
+const refreshPosts = async () => {
+  loading.value = true;
+  await postStore.fetchPosts(themeId);
+  loading.value = false;
+};
 
 // Spotifyトラックを再生する関数
 const playTrack = async (trackUri: string) => {
@@ -232,10 +269,7 @@ const handleClickOutside = (event: MouseEvent) => {
     openMenuId.value = null;
   }
 };
-
-const getCurrentUserPost = () => {
-  return posts.value.filter((post) => post.user_id === currentUser.value.id);
-};
+const loading = ref(true);
 </script>
 
 <style scoped></style>

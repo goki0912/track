@@ -4,6 +4,8 @@ import "./assets/tailwind.css";
 import router from "./router";
 import axios from "axios";
 import { createPinia } from "pinia";
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
 
 axios.defaults.baseURL = "http://localhost/api";
 axios.defaults.withCredentials = true; // Cookieを使用する場合
@@ -23,6 +25,20 @@ const token = getCookie("token");
 if (token) {
   axios.defaults.headers.common.Authorization = `Bearer ${token}`; // トークンが存在する場合、'Authorization'ヘッダーに設定
 }
+
+window.Pusher = Pusher;
+
+// Laravel EchoのReverb設定
+window.Echo = new Echo({
+  broadcaster: "reverb",
+  key: process.env.VUE_APP_REVERB_APP_KEY, // .envの設定を使う
+  wsHost: process.env.VUE_APP_REVERB_HOST || "localhost", // Reverbホスト
+  wsPort: process.env.VUE_APP_REVERB_PORT || 6001, // WebSocketポートを指定
+  wssPort: process.env.VUE_APP_REVERB_PORT || 6001,
+  forceTLS: false,
+  disableStats: true,
+  enabledTransports: ["ws", "wss"], // WebSocketプロトコルを使用
+});
 
 app.use(router);
 app.use(pinia);

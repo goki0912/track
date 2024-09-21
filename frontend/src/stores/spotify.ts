@@ -58,7 +58,7 @@ export const useSpotifyStore = defineStore("spotify", () => {
     if (accessToken.value) {
       try {
         await fetchUserProfile(); // ここで期限切れならエラーが発生
-      } catch (error) {
+      } catch (error: any) {
         if (error.response && error.response.status === 401) {
           console.log("アクセストークンが無効です。リフレッシュします。");
           await refreshAccessToken(); // 期限切れならリフレッシュトークンで再取得

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostUpdated;
 use App\Models\Post;
 use App\Models\Track;
 use Illuminate\Http\JsonResponse;
@@ -102,6 +103,9 @@ class PostController extends Controller
 
             DB::commit();
 
+            // リアルタイム反映用
+            event(new PostUpdated($post->theme_id, $post->id, $post->likes_count));
+
             return response()->json(['likes_count' => $post->likes_count], 200);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -125,6 +129,9 @@ class PostController extends Controller
             }
 
             DB::commit();
+
+            // リアルタイム反映用
+            event(new PostUpdated($post->theme_id, $post->id, $post->likes_count));
 
             return response()->json(['likes_count' => $post->likes_count], 200);
         } catch (\Exception $e) {
