@@ -6,5 +6,5 @@
 (<img src="https://img.shields.io/badge/Terraform-844FBA.svg?logo=Terraform&style=flat&logoColor=ccc">)
 
 
-## SPA
-音楽をシェアするSNS
+## 概要
+音楽をシェアするSNS（SPA）
