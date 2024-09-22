@@ -44,7 +44,7 @@ services:
       - db-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: ai-chat
+      MYSQL_DATABASE: track
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     networks:

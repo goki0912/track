@@ -6,6 +6,8 @@ import axios from "axios";
 import { createPinia } from "pinia";
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
+import ToastPlugin from "vue-toast-notification";
+import 'vue-toast-notification/dist/theme-bootstrap.css';
 
 axios.defaults.baseURL = "http://localhost/api";
 axios.defaults.withCredentials = true; // Cookieを使用する場合
@@ -42,4 +44,5 @@ window.Echo = new Echo({
 
 app.use(router);
 app.use(pinia);
+app.use(ToastPlugin);
 app.mount("#app");
