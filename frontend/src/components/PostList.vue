@@ -119,10 +119,12 @@ import LikeButton from "@/components/LikeButton.vue";
 import ReloadButton from "@/components/ReloadButton.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import PostForm from "@/components/PostForm.vue";
+import { useToast } from "vue-toast-notification";
 
 // ストアの使用と状態管理
 const postStore = usePostStore();
 const themeStore = useThemeStore();
+const toast = useToast();
 const posts = computed(() => postStore.posts);
 const currentUser = ref<{ id: number; name: string } | null>(null);
 const currentUserPost = computed(() => {
@@ -214,11 +216,20 @@ const playTrack = async (trackUri: string) => {
 
     if (response.status === 200) {
       console.log("Track is playing");
+      toast.success('Your track is playing!', {
+        position: 'top-right',
+      });
     } else {
       console.log("Failed to play track", response.status);
+      toast.error('Failed to play a track', {
+        position: 'top-right',
+      });
     }
   } catch (error) {
     console.error("Error playing track", error);
+    toast.error('Failed to play a track', {
+      position: 'top-right',
+    });
   }
 };
 
@@ -227,19 +238,7 @@ const deletePost = async (postId: number) => {
   if (!confirm("本当にこの投稿を削除しますか？")) {
     return;
   }
-
-  try {
-    const response = await axios.delete(`spotify/posts/${postId}`);
-    if (response.status === 200) {
-      posts.value = posts.value.filter((post) => post.id !== postId);
-      alert("削除が完了しました");
-      console.log("Post deleted successfully");
-    } else {
-      console.log("Failed to delete post", response.status);
-    }
-  } catch (error) {
-    console.error("Error deleting post", error);
-  }
+  await postStore.deletePost(themeId, postId);
 };
 
 // 投稿モーダル管理
