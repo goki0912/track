@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useToast } from "vue-toast-notification";
+import axios from "axios";
 
 export const useAuthStore = defineStore("auth", () => {
   const toast = useToast();
@@ -25,10 +26,37 @@ export const useAuthStore = defineStore("auth", () => {
     isAuthenticated.value = document.cookie.includes("isAuthenticated=true");
   };
 
+  const sendPasswordResetEmail = async (email: string) => {
+    console.log(email);
+    try {
+      // パスワードリセットメールを送信する処理
+      const response = await axios.post("/password/email", {
+        email,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const resetPassword = async (email: string, password: string, token: string) => {
+    try {
+      // パスワードリセット処理
+      const response = await axios.post("/reset-password", {
+        email,
+        password,
+        token,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return {
     isAuthenticated,
     login,
     logout,
     checkAuth,
+    sendPasswordResetEmail,
+    resetPassword,
   };
 });

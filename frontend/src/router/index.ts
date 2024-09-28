@@ -6,6 +6,8 @@ import ProfilePage from "@/components/ProfilePage.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useSpotifyStore } from "@/stores/spotify";
 import ThemeList from "@/components/ThemeList.vue";
+import ForgotPassword from "@/components/ForgotPassword.vue";
+import PasswordReset from "@/components/PasswordReset.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -19,6 +21,22 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/register",
     component: RegisterPage,
+    meta: {
+      requiresAuth: false,
+      guestOnly: true,
+    },
+  },
+  {
+    path: "/forgot-password",
+    component: ForgotPassword,
+    meta: {
+      requiresAuth: false,
+      guestOnly: true,
+    },
+  },
+  {
+    path: "/password-reset/:token",
+    component: PasswordReset,
     meta: {
       requiresAuth: false,
       guestOnly: true,

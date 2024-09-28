@@ -32,6 +32,12 @@
         >Register here</router-link
         >
       </p>
+      <p class="mt-4 text-center text-green-600">
+        Forget you password?
+        <router-link to="/forgot-password" class="text-green-500 hover:underline"
+        >Reset here</router-link
+        >
+      </p>
     </div>
   </div>
 </template>
