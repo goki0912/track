@@ -20,15 +20,17 @@ const showTheme = async (themeId: number) => {
 </script>
 
 <template>
-  <LoadingSpinner :loading="loading" />
-  <h1>Theme Page</h1>
-  <div v-for="theme in themes" :key="theme.id">
-    <button
-        @click="showTheme(theme.id)"
-        class="bg-stone-200 text-left w-full py-2 px-4 rounded hover:bg-stone-400 transition duration-300"
-    >
-      {{theme.title}}
-    </button>
+  <div>
+    <LoadingSpinner :loading="loading" />
+    <h1>Theme Page</h1>
+    <div v-for="theme in themes" :key="theme.id">
+      <button
+          @click="showTheme(theme.id)"
+          class="bg-stone-200 text-left w-full py-2 px-4 rounded hover:bg-stone-400 transition duration-300"
+      >
+        {{theme.title}}
+      </button>
+    </div>
   </div>
 </template>
 

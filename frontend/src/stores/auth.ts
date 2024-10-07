@@ -33,10 +33,11 @@ export const useAuthStore = defineStore("auth", () => {
       const response = await axios.post("/password/email", {
         email,
       });
+      console.log(response);
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   const resetPassword = async (email: string, password: string, token: string) => {
     try {
@@ -46,10 +47,11 @@ export const useAuthStore = defineStore("auth", () => {
         password,
         token,
       });
+      console.log(response);
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   return {
     isAuthenticated,

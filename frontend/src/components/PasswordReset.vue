@@ -3,7 +3,9 @@
 </script>
 
 <template>
-  パスリセするよ
+  <div>
+    パスリセするよ
+  </div>
 </template>
 
 <style scoped>

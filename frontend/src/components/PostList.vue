@@ -216,19 +216,19 @@ const playTrack = async (trackUri: string) => {
 
     if (response.status === 200) {
       console.log("Track is playing");
-      toast.success('Your track is playing!', {
-        position: 'top-right',
+      toast.success("Your track is playing!", {
+        position: "top-right",
       });
     } else {
       console.log("Failed to play track", response.status);
-      toast.error('Failed to play a track', {
-        position: 'top-right',
+      toast.error("Failed to play a track", {
+        position: "top-right",
       });
     }
   } catch (error) {
     console.error("Error playing track", error);
-    toast.error('Failed to play a track', {
-      position: 'top-right',
+    toast.error("Failed to play a track", {
+      position: "top-right",
     });
   }
 };
