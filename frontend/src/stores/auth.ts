@@ -38,15 +38,14 @@ export const useAuthStore = defineStore("auth", () => {
       });
       toast.success("Password reset email sent", {
         position: "top-right",
-      })
+      });
     } catch (error) {
       toast.error("Failed to send password reset email", {
         position: "top-right",
-      })
+      });
       console.error(error);
     }
   };
-
 
   const resetPassword = async (email: string, password: string, passwordConfirmation: string) => {
     const token = route.params.token as string; // パラメータからトークン取得
@@ -56,7 +55,7 @@ export const useAuthStore = defineStore("auth", () => {
         email: email.value,
         password: password.value,
         password_confirmation: passwordConfirmation.value,
-        token: token,
+        token,
       });
       toast.success("Password reset successfully", {
         position: "top-right",

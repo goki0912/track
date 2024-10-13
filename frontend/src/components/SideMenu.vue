@@ -18,7 +18,7 @@ const hideMenuRoutePatterns = [
   "/login",
   "/register",
   "/forgot-password",
-  /^\/password-reset\/[^\/?]+/
+  /^\/password-reset\/[^\/?]+/,
 ];
 
 // 現在のルートがメニュー非表示パターンに一致するか判定

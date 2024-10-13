@@ -4,4 +4,4 @@ interface Window {
     Echo: any;
     Pusher: any;
 }
-declare var window: Window;
+declare let window: Window;

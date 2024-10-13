@@ -18,8 +18,8 @@ const passwordConfirmation = ref("");
 const toast = useToast();
 
 const submit = () => {
-  authStore.resetPassword(email, password, passwordConfirmation)
-}
+  authStore.resetPassword(email, password, passwordConfirmation);
+};
 
 </script>
 
@@ -68,6 +68,3 @@ const submit = () => {
     </div>
   </div>
 </template>
-
-<style scoped>
-</style>
