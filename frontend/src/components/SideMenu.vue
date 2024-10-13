@@ -13,8 +13,24 @@ const menuItems = ref([
 const isMenuOpen = ref(false);
 
 const route = useRoute();
-const hideMenuRoute = ["/login", "/register"];
-const showMenu = computed(() => !hideMenuRoute.includes(route.path));
+// メニューを非表示にするルートパスのリスト
+const hideMenuRoutePatterns = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  /^\/password-reset\/[^\/?]+/,
+];
+
+// 現在のルートがメニュー非表示パターンに一致するか判定
+const showMenu = computed(() => {
+  return !hideMenuRoutePatterns.some((pattern) => {
+    if (typeof pattern === "string") {
+      return pattern === route.path;
+    } else {
+      return pattern.test(route.path); // 正規表現の場合はパターンマッチ
+    }
+  });
+});
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };

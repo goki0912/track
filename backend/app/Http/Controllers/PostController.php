@@ -143,7 +143,6 @@ class PostController extends Controller
     public function destroy($id): JsonResponse
     {
         $post = Post::findOrFail($id);
-        Log::error(\auth()->user()->id);
 
         // 現在のユーザーが投稿の所有者であることを確認
         if (auth()->user()->id !== $post->user_id) {

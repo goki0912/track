@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { Post, Track } from "@/types";
-import {useToast} from "vue-toast-notification";
+import { useToast } from "vue-toast-notification";
 
 export const usePostStore = defineStore("post", {
   state: () => ({
@@ -23,30 +23,30 @@ export const usePostStore = defineStore("post", {
       try {
         await axios.post(`spotify/theme/${themeId}/posts`, track);
         await this.fetchPosts(themeId);
-        toast.success('posted successfully!', {
-          position: 'top-right',
+        toast.success("posted successfully!", {
+          position: "top-right",
         });
       } catch (error) {
         console.error("Failed to create a post", error);
-        toast.error('Failed to create a post', {
-          position: 'top-right',
+        toast.error("Failed to create a post", {
+          position: "top-right",
         });
       }
     },
     async deletePost(themeId: number, postId: number) {
-        const toast = useToast();
-        try {
-            await axios.delete(`spotify/posts/${postId}`);
-            await this.fetchPosts(themeId);
-            toast.success('Deleted successfully!', {
-            position: 'top-right',
-            });
-        } catch (error) {
-            console.error("Failed to delete a post", error);
-            toast.error('Failed to delete a post', {
-              position: 'top-right',
-            });
-        }
-    }
+      const toast = useToast();
+      try {
+        await axios.delete(`spotify/posts/${postId}`);
+        await this.fetchPosts(themeId);
+        toast.success("Deleted successfully!", {
+          position: "top-right",
+        });
+      } catch (error) {
+        console.error("Failed to delete a post", error);
+        toast.error("Failed to delete a post", {
+          position: "top-right",
+        });
+      }
+    },
   },
 });
