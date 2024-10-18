@@ -8,3 +8,5 @@
 
 ## 概要
 音楽をシェアするSNS（SPA）
+認証はLaravel sanctum
+
