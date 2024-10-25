@@ -2,7 +2,7 @@
 FROM php:8.2-fpm-alpine
 
 # 必要なパッケージをインストール
-RUN apk --no-cache add nginx supervisor curl git bash zip unzip libpng-dev oniguruma-dev libxml2-dev zip libzip-dev
+RUN apk --no-cache add bash curl git libpng-dev libxml2-dev libzip-dev nginx oniguruma-dev supervisor unzip zip
 
 # PHP拡張モジュールをインストール
 RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
