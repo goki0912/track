@@ -30,7 +30,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx:/etc/nginx/conf.d
+      - ./infra/docker/development/nginx:/etc/nginx/conf.d
       - ./frontend/dist:/usr/share/nginx/html
       - ./backend:/var/www/html
     networks:
