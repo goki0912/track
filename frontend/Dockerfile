@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # ビルド
-RUN npm run build
+RUN #npm run build
 
 # サービスの起動
 CMD ["npm", "run", "serve"]

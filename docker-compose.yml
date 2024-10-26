@@ -4,7 +4,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "3000:3000"
     volumes:
       - ./frontend:/app
     networks:
@@ -30,7 +30,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx:/etc/nginx/conf.d
+      - ./infra/docker/development/nginx:/etc/nginx/conf.d
       - ./frontend/dist:/usr/share/nginx/html
       - ./backend:/var/www/html
     networks:

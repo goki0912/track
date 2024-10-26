@@ -57,7 +57,7 @@ const router = useRouter();
 
 const login = async () => {
   try {
-    await axios.get("http://localhost:8000/sanctum/csrf-cookie"); // CSRFトークンを取得
+    await axios.get(`${process.env.VUE_APP_API_BASE_URL}/sanctum/csrf-cookie`);
     const response = await axios.post("/login", {
       email: email.value,
       password: password.value,
