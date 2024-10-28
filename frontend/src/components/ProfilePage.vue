@@ -70,7 +70,7 @@ const getUserProfile = async () => {
 onMounted(async () => {
   await fetchSpotifyAuthUrl();
   await handleSpotifyCallback();
-  loading.value = false
+  loading.value = false;
 });
 </script>
 <template>

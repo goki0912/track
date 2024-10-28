@@ -3,8 +3,8 @@
   <div class="divider text-secondary">***</div>
 </template>
 <script type="ts" setup>
-import { defineProps } from 'vue';
+import { defineProps } from "vue";
 defineProps({
-  title: String
-})
+  title: String,
+});
 </script>
