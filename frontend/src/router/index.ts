@@ -90,8 +90,11 @@ router.beforeEach(async (to, from, next) => {
   ) {
     next("/login");
   } else {
-    const spotifyStore = useSpotifyStore();
-    await spotifyStore.ensureAuthenticated();
+    // ログイン画面などではspotify情報を取得して欲しくない
+    if (to.matched.some((record) => record.meta.requiresAuth)) {
+      const spotifyStore = useSpotifyStore();
+      await spotifyStore.ensureAuthenticated();
+    }
     if (
       to.matched.some((record) => record.meta.guestOnly) &&
       authStore.isAuthenticated
