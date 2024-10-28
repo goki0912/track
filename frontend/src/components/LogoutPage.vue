@@ -1,10 +1,7 @@
 <template>
-  <a
-      @click="logout"
-      class="block py-2 px-4 rounded text-red-400 hover:bg-green-800"
-  >
-    Logout
-  </a>
+  <button @click="logout" class="text-red-400 rounded hover:bg-gray-200 cursor-pointer">
+      Logout
+  </button>
 </template>
 
 <script setup>

@@ -2,12 +2,16 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
+import PageTitle from "@/components/PageTitle.vue";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
 
 const spotifyAuthUrl = ref("");
 const accessToken = ref<string | null>(null);
 const userProfile = ref<any>(null);
 const router = useRouter();
 const route = useRoute();
+
+const loading = ref(true);
 
 // 初回認証用のSpotify認証URLを取得する関数
 const fetchSpotifyAuthUrl = async () => {
@@ -28,7 +32,7 @@ const handleSpotifyCallback = async () => {
       const token = response.data.access_token;
       const refreshToken = response.data.refresh_token; // 追加: refresh_tokenの取得
       sessionStorage.setItem("spotify_access_token", token);
-      sessionStorage.setItem("spotify_refresh_token", refreshToken); // 追加: refresh_tokenの保存
+      localStorage.setItem("spotify_refresh_token", refreshToken); // 追加: refresh_tokenの保存
       accessToken.value = token;
       await getUserProfile();
       await router.replace({ path: "/profile", query: {} });
@@ -66,19 +70,23 @@ const getUserProfile = async () => {
 onMounted(async () => {
   await fetchSpotifyAuthUrl();
   await handleSpotifyCallback();
+  loading.value = false
 });
 </script>
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-green-50">
-    <div class="max-w-md w-full bg-white shadow-md rounded-lg p-6">
-      <h1 class="text-3xl font-bold text-green-600 mb-4">Profile</h1>
+  <div class="h-screen">
+    <PageTitle title="Profile" />
+    <LoadingSpinner v-if="loading" :loading="loading" />
       <!-- 初回認証時のボタン -->
-      <a :href="spotifyAuthUrl" v-if="!userProfile" class="btn btn-primary">
-        Authenticate with Spotify
-      </a>
+    <div v-else-if="!userProfile" class="flex justify-center">
+        <button class="btn btn-primary">
+          <a :href="spotifyAuthUrl">
+            Authenticate with Spotify
+          </a>
+        </button>
+    </div>
       <!-- 認証後にプロフィール情報を表示 -->
-      <div v-if="userProfile">
-        <h2>Spotify Profile</h2>
+      <div v-if="userProfile" class="bg-gray-100 p-3 text-black rounded-lg mx-2">
         <p><strong>Name:</strong> {{ userProfile.display_name }}</p>
         <p><strong>Email:</strong> {{ userProfile.email }}</p>
         <p><strong>Country:</strong> {{ userProfile.country }}</p>
@@ -89,7 +97,6 @@ onMounted(async () => {
         />
       </div>
     </div>
-  </div>
 </template>
 <style scoped>
 .btn {
