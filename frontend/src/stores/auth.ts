@@ -17,7 +17,7 @@ export const useAuthStore = defineStore("auth", () => {
     document.cookie = "isAuthenticated=true"; // cookie に認証情報をセット
   };
 
-  const logout = () => {
+  const logout = async () => {
     isAuthenticated.value = false;
     document.cookie = "isAuthenticated=false"; // cookie の認証情報を削除
     toast.success("Logged out successfully", {
