@@ -41,5 +41,16 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('spotify/themes', [ThemeController::class, 'index']);
 });
 
+//メールの画像取得用、api/imagesは意味不明だけどこれが楽なんです
+Route::get('/images/{filename}', static function ($filename)
+{
+    $path = public_path('images/' . $filename);
+
+    if (!file_exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path);
+});
 
 
