@@ -43,7 +43,8 @@ const toggleMenu = () => {
       class="hidden md:block md:w-56 bg-gradient-to-r from-green-500 via-green-400 to-green-300 text-white min-h-screen"
     >
       <div class="p-4">
-        <h2 class="text-2xl font-bold">Track.com</h2>
+        <img src="@/assets/logo.png" alt="TrackWave" class="h-8 w-8">
+        <h2 class="text-2xl font-bold" style="color: #323F5D">TrackWave</h2>
         <ul>
           <li v-for="item in menuItems" :key="item.path" class="my-2">
             <a
@@ -61,7 +62,10 @@ const toggleMenu = () => {
         v-if="showMenu"
         class="navbar md:hidden bg-gradient-to-r from-green-500 via-green-400 to-green-300 p-4 text-white flex justify-between items-center"
       >
-        <h2 class="text-2xl font-bold">Track.com</h2>
+        <div class="space-x-1">
+          <img src="@/assets/logo.png" alt="TrackWave" class="h-8 w-8">
+          <h2 class="text-2xl font-bold" style="color: #323F5D">TrackWave</h2>
+        </div>
         <div class="space-x-1">
           <div class="dropdown dropdown-end">
             <button class="bg-opacity-0 border-0 list-none">

@@ -42,7 +42,7 @@
           Register
         </button>
       </form>
-      <p class="mt-4 text-center text-green-600">
+      <p class="mt-2 text-center text-green-600">
         Already have an account?
         <router-link to="/" class="text-green-500 hover:underline"
           >Login here</router-link
