@@ -52,9 +52,9 @@ export const useAuthStore = defineStore("auth", () => {
 
     try {
       await axios.post("/password/reset", {
-        email: email.value,
-        password: password.value,
-        password_confirmation: passwordConfirmation.value,
+        email: email,
+        password: password,
+        password_confirmation: passwordConfirmation,
         token,
       });
       toast.success("Password reset successfully", {
