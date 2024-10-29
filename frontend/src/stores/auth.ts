@@ -52,8 +52,9 @@ export const useAuthStore = defineStore("auth", () => {
 
     try {
       await axios.post("/password/reset", {
-        email: email,
-        password: password,
+        // へーkeyとvalueが同じならこれでいいんだ?
+        email,
+        password,
         password_confirmation: passwordConfirmation,
         token,
       });

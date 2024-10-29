@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import { useToast } from "vue-toast-notification";
 
 // ルート情報の取得
 const route = useRoute();
-const router = useRouter();
 
 const authStore = useAuthStore();
 
@@ -14,8 +12,6 @@ const authStore = useAuthStore();
 const email = ref(route.query.email || ""); // クエリからメール取得
 const password = ref("");
 const passwordConfirmation = ref("");
-
-const toast = useToast();
 
 const submit = () => {
   authStore.resetPassword(email.value, password.value, passwordConfirmation.value);

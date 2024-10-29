@@ -10,14 +10,13 @@ const menuItems = ref([
   // 他のメニュー項目もここに追加できます
 ]);
 
-const isMenuOpen = ref(false);
-
 const route = useRoute();
 // メニューを非表示にするルートパスのリスト
 const hideMenuRoutePatterns = [
   "/login",
   "/register",
   "/forgot-password",
+  // eslint-disable-next-line
   /^\/password-reset\/[^\/?]+/,
 ];
 
@@ -31,9 +30,6 @@ const showMenu = computed(() => {
     }
   });
 });
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
-};
 </script>
 
 <template>
