@@ -25,6 +25,7 @@ services:
     environment:
       - COMPOSER_ALLOW_SUPERUSER=1
 
+  #http://localhostで開く。nginxを介した実質本番を想定した設定となるが、不完全
   web:
     image: nginx:alpine
     ports:
