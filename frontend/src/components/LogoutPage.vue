@@ -30,7 +30,7 @@ const logout = async () => {
     }
     // authStoreを使ってローカルのログアウト処理
     await authStore.logout();
-    // ログインページへリダイレクト(なぜかawaitないとだめ?
+    // ログインページへリダイレクト(なぜかawaitないとだめ
     await router.push("/login");
   } catch (error) {
     console.error(error);
