@@ -22,14 +22,16 @@ const logout = async () => {
     // ログアウトAPIにリクエスト
     await axios.post("/logout");
     // Cookieからトークンと認証情報を削除
-    document.cookie = "token=; Max-Age=0; path=/";
-    document.cookie = "isAuthenticated=; Max-Age=0; path=/";
+    document.cookie = `token=; Max-Age=0; path=/`;
+    document.cookie = `isAuthenticated=; Max-Age=0; path=/`;
     // Axiosの認証ヘッダーを削除
-    delete axios.defaults.headers.common.Authorization;
+    if (axios.defaults.headers.common.Authorization) {
+      delete axios.defaults.headers.common.Authorization;
+    }
     // authStoreを使ってローカルのログアウト処理
-    authStore.logout();
-    // ログインページへリダイレクト
-    router.push("/login");
+    await authStore.logout();
+    // ログインページへリダイレクト(なぜかawaitないとだめ?
+    await router.push("/login");
   } catch (error) {
     console.error(error);
     alert("Logout failed");
