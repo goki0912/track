@@ -4,21 +4,21 @@ import { ref } from "vue";
 
 export const useSpotifyStore = defineStore("spotify", () => {
   const accessToken = ref<string | null>(sessionStorage.getItem("spotify_access_token"));
-  const refreshToken = ref<string | null>(sessionStorage.getItem("spotify_refresh_token"));
+  const refreshToken = ref<string | null>(localStorage.getItem("spotify_refresh_token"));
   const userProfile = ref<any>(null);
 
   const setTokens = (access: string, refresh: string) => {
     accessToken.value = access;
     refreshToken.value = refresh;
     sessionStorage.setItem("spotify_access_token", access);
-    sessionStorage.setItem("spotify_refresh_token", refresh);
+    localStorage.setItem("spotify_refresh_token", refresh);
   };
 
   const clearTokens = () => {
     accessToken.value = null;
     refreshToken.value = null;
     sessionStorage.removeItem("spotify_access_token");
-    sessionStorage.removeItem("spotify_refresh_token");
+    localStorage.removeItem("spotify_refresh_token");
   };
 
   const fetchUserProfile = async () => {

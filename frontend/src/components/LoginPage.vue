@@ -1,6 +1,10 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-green-50">
-    <div class="max-w-md w-full bg-white shadow-md rounded-lg p-6">
+  <div class="min-h-screen flex items-center justify-center bg-gray-800">
+    <div class="max-w-md w-full bg-white shadow-md rounded-lg p-6 mx-4">
+      <div class="flex justify-center">
+        <img src="@/assets/logo.png" alt="TrackWave" class="h-14 w-14">
+      </div>
+      <p class="text-center text-xs font-semibold" style="color: #323F5D">TrackWave</p>
       <h1 class="text-3xl font-bold text-green-600 mb-4">Login</h1>
       <form @submit.prevent="login">
         <div class="mb-4">
@@ -8,7 +12,7 @@
               v-model="email"
               type="email"
               placeholder="Email"
-              class="w-full px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring focus:ring-green-200"
+              class="input input-bordered w-full px-3 py-2 border bg-white text-black input-primary rounded-md"
           />
         </div>
         <div class="mb-4">
@@ -16,7 +20,7 @@
               v-model="password"
               type="password"
               placeholder="Password"
-              class="w-full px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring focus:ring-green-200"
+              class="input input-bordered w-full px-3 py-2 border bg-white text-black input-primary rounded-md"
           />
         </div>
         <button
@@ -26,13 +30,13 @@
           Login
         </button>
       </form>
-      <p class="mt-4 text-center text-green-600">
+      <p class="mt-2 text-center text-green-600">
         Don't have an account?
         <router-link to="/register" class="text-green-500 hover:underline"
         >Register here</router-link
         >
       </p>
-      <p class="mt-4 text-center text-green-600">
+      <p class="mt-2 text-center text-green-600">
         Forget you password?
         <router-link to="/forgot-password" class="text-green-500 hover:underline"
         >Reset here</router-link

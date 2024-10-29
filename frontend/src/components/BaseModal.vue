@@ -1,17 +1,11 @@
 <template>
-  <div
-    v-if="isOpen"
-    class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50"
-    @click.self="closeModal"
-  >
-    <div
-      class="bg-white p-6 rounded-lg w-11/12 relative max-h-full overflow-y-auto"
-    >
+  <div v-if="isOpen" class="modal modal-open" @click.self="closeModal">
+    <div class="modal-box relative bg-gray-100">
       <button
-        @click="closeModal"
-        class="text-gray-500 hover:text-gray-700 absolute top-4 right-4"
+          @click="closeModal"
+          class="btn btn-sm btn-circle absolute right-2 top-2"
       >
-        &times;
+        ✕
       </button>
       <slot></slot>
     </div>
@@ -33,5 +27,5 @@ const closeModal = () => {
 </script>
 
 <style scoped>
-/* 追加のスタイリングをここに記述 */
+/* 必要に応じて追加のスタイルを設定 */
 </style>
