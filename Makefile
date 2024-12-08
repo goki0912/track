@@ -5,17 +5,24 @@
 # エイリアスの定義
 dco = docker compose
 
-# Docker Composeを使用してコンテナを起動
+init:
+	build up migrate seed
+
+build:
+	$(dco) build
+
 up:
 	$(dco) up -d
 
-# Docker Composeを使用してコンテナを停止
+migrate:
+	$(dco) exec app php artisan migrate
+
+seed:
+	$(dco) exec app php artisan db:seed
+
 down:
 	$(dco) down
 
-# Docker Composeを使用してイメージをビルド
-build:
-	$(dco) build
 
 # Docker Composeを使用してキャッシュを使わずに再ビルド
 #rebuild:
