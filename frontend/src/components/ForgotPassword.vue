@@ -5,7 +5,6 @@ const authStore = useAuthStore();
 
 const mail = ref("");
 const submit = () => {
-  console.log("ああああ", mail.value);
   authStore.sendPasswordResetEmail(mail.value);
 };
 </script>

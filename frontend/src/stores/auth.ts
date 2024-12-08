@@ -30,7 +30,6 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const sendPasswordResetEmail = async (email: string) => {
-    console.log(email);
     try {
       // パスワードリセットメールを送信する処理
       await axios.post("/password/email", {
@@ -66,7 +65,7 @@ export const useAuthStore = defineStore("auth", () => {
         router.push("/login"); // ログインページにリダイレクト
       }, 3000);
     } catch (error: any) {
-      console.log(error.response.data);
+      console.error(error.response.data);
       toast.error("Failed to reset password", {
         position: "top-right",
       });
