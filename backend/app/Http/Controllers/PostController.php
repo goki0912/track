@@ -104,6 +104,7 @@ class PostController extends Controller
             DB::commit();
 
             // リアルタイム反映用
+            // 冗長だからメソッド切り出し or モデルでupdated イベントをリッスンして、likes_count が変化した場合のみ PostUpdated イベントを発火させよう
             event(new PostUpdated($post->theme_id, $post->id, $post->likes_count));
 
             return response()->json(['likes_count' => $post->likes_count], 200);
