@@ -11,11 +11,11 @@
 
 
 ## イメージ
-<img width="200" alt="image" src="https://github.com/user-attachments/assets/81717cf1-7e7f-4740-8928-eda504454cba">
+<img width="240" alt="image" src="https://github.com/user-attachments/assets/81717cf1-7e7f-4740-8928-eda504454cba">
 
-<img width="200" alt="image" src="https://github.com/user-attachments/assets/a5e4ce2f-548f-4bf3-977c-67a96d9a17a8">
+<img width="240" alt="image" src="https://github.com/user-attachments/assets/a5e4ce2f-548f-4bf3-977c-67a96d9a17a8">
 
-<img width="200" alt="image" src="https://github.com/user-attachments/assets/4c1db887-565a-48ab-9c29-57d5e59aa506">
+<img width="240" alt="image" src="https://github.com/user-attachments/assets/4c1db887-565a-48ab-9c29-57d5e59aa506">
 
 
 
