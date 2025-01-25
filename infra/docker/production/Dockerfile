@@ -2,11 +2,35 @@
 FROM php:8.2-fpm-alpine
 
 # 必要なパッケージをインストール
-RUN apk --no-cache add bash curl git libpng-dev libxml2-dev libzip-dev nginx oniguruma-dev supervisor unzip zip
+RUN apk add --no-cache \
+    bash \
+    curl \
+    git \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
+    libxpm-dev \
+    libxml2-dev \
+    libzip-dev \
+    oniguruma-dev \
+    zip \
+    unzip \
+    supervisor
 
-# PHP拡張モジュールをインストール
-RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
-
+# PHP拡張をインストール
+RUN docker-php-ext-configure gd \
+    --with-jpeg \
+    --with-webp \
+    --with-xpm \
+ && docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    zip
 # 公式のComposerイメージを使用
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -29,4 +53,4 @@ COPY ./infra/docker/production/supervisord.conf /etc/supervisord.conf
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
 
 # ポートを公開
-EXPOSE 80
+EXPOSE 8000
