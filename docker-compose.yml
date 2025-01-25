@@ -20,6 +20,7 @@ services:
       - "6001:6001"   # WebSocketのポートを公開
     volumes:
       - ./backend:/var/www/html
+      - ./backend/.env.local:/var/www/html/.env
     networks:
       - app-network
     environment:
