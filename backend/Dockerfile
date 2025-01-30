@@ -11,11 +11,18 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     procps \
+    supervisor \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd pdo pdo_mysql pcntl
 
 # 作業ディレクトリの設定
 WORKDIR /var/www/html
+
+# PHP-FPM の設定ファイルをコンテナにコピー
+COPY php-fpm.conf /usr/local/etc/php-fpm.conf
+COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
+RUN mkdir -p /var/log && touch /var/log/php-fpm.log /var/log/php-fpm.slow.log /var/log/php-fpm.access.log \
+    && chown www-data:www-data /var/log/php-fpm.log /var/log/php-fpm.slow.log /var/log/php-fpm.access.log
 
 # コンポーザーのインストール
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -36,8 +43,22 @@ RUN composer dump-autoload --optimize
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Entrypointスクリプトのコピーと実行権限の付与
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+#COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+#RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chown root:root /var/www/html/.env.production
+
+
+COPY supervisord.conf /etc/supervisord.conf
+#CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+
 
 # Entrypointスクリプトをエントリーポイントに設定
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+#ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# Entrypointスクリプトをコピー
+COPY supervisord_init.sh /usr/local/bin/supervisord_init.sh
+RUN chmod +x /usr/local/bin/supervisord_init.sh
+
+# Entrypointを設定
+ENTRYPOINT ["/usr/local/bin/supervisord_init.sh"]
+
