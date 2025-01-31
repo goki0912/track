@@ -21,6 +21,8 @@ services:
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
+    build:
+      target: dev
 
   web:
     ports:

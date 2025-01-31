@@ -1,5 +1,5 @@
-# ベースイメージ
-FROM php:8.2-fpm
+# ======== 共通ベースイメージ ========
+FROM php:8.2-fpm AS base
 
 # 必要なライブラリのインストール
 RUN apt-get update && apt-get install -y \
@@ -24,7 +24,7 @@ COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
 RUN mkdir -p /var/log && touch /var/log/php-fpm.log /var/log/php-fpm.slow.log /var/log/php-fpm.access.log \
     && chown www-data:www-data /var/log/php-fpm.log /var/log/php-fpm.slow.log /var/log/php-fpm.access.log
 
-# コンポーザーのインストール
+# Composerのインストール
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # 依存関係のキャッシュ最適化のため、composerファイルだけ先にコピー
@@ -42,23 +42,30 @@ RUN composer dump-autoload --optimize
 # パーミッションの設定
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Entrypointスクリプトのコピーと実行権限の付与
-#COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-#RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# ======== 開発環境用ビルド ========
+FROM base AS dev
+
+# Entrypointスクリプトをコピー
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# 開発環境用のエントリーポイント設定
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+
+# ======== 本番環境用ビルド ========
+FROM base AS prod
+
+# .env.productionのパーミッションを変更
 RUN chown root:root /var/www/html/.env.production
 
-
+# supervisordの設定をコピー
 COPY supervisord.conf /etc/supervisord.conf
-#CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
-
-
-# Entrypointスクリプトをエントリーポイントに設定
-#ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # Entrypointスクリプトをコピー
 COPY supervisord_init.sh /usr/local/bin/supervisord_init.sh
 RUN chmod +x /usr/local/bin/supervisord_init.sh
 
-# Entrypointを設定
+# 本番環境用のエントリーポイント設定
 ENTRYPOINT ["/usr/local/bin/supervisord_init.sh"]
-
