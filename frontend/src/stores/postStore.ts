@@ -11,7 +11,7 @@ export const usePostStore = defineStore("post", {
   actions: {
     async fetchPosts(themeId: number) {
       try {
-        const response = await axios.get(`spotify/theme/${themeId}/posts`);
+        const response = await axios.get(`api/spotify/theme/${themeId}/posts`);
         this.posts = response.data.posts;
         this.likedPosts = response.data.likedPosts;
       } catch (error) {
@@ -21,7 +21,7 @@ export const usePostStore = defineStore("post", {
     async createPost(themeId: number, track: Track) {
       const toast = useToast(); // トーストのインスタンスを取得
       try {
-        await axios.post(`spotify/theme/${themeId}/posts`, track);
+        await axios.post(`api/spotify/theme/${themeId}/posts`, track);
         await this.fetchPosts(themeId);
         toast.success("posted successfully!", {
           position: "top-right",
@@ -36,7 +36,7 @@ export const usePostStore = defineStore("post", {
     async deletePost(themeId: number, postId: number) {
       const toast = useToast();
       try {
-        await axios.delete(`spotify/posts/${postId}`);
+        await axios.delete(`api/spotify/posts/${postId}`);
         await this.fetchPosts(themeId);
         toast.success("Deleted successfully!", {
           position: "top-right",

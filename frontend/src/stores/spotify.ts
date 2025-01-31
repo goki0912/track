@@ -24,7 +24,7 @@ export const useSpotifyStore = defineStore("spotify", () => {
   const fetchUserProfile = async () => {
     if (accessToken.value) {
       try {
-        const response = await axios.get("/spotify/user-profile", {
+        const response = await axios.get("api/spotify/user-profile", {
           headers: {
             spotifyAuthorization: `Bearer ${accessToken.value}`,
           },
@@ -42,7 +42,7 @@ export const useSpotifyStore = defineStore("spotify", () => {
   const refreshAccessToken = async () => {
     if (refreshToken.value) {
       try {
-        const response = await axios.post("/spotify/refresh-token", {
+        const response = await axios.post("api/spotify/refresh-token", {
           refresh_token: refreshToken.value,
         });
         setTokens(response.data.access_token, refreshToken.value);

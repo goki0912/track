@@ -23,7 +23,7 @@ const getCookie = (name: string) => {
   }
 };
 // CSRFトークンを取得して設定
-axios.get("/csrf-token").then(response => {
+axios.get("api/csrf-token").then(response => {
   const csrfToken = response.data.csrf_token; // トークンを取得
   axios.defaults.headers.common["X-CSRF-TOKEN"] = csrfToken; // トークンをヘッダーに設定
 });

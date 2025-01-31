@@ -16,12 +16,12 @@ export const useLikeStore = defineStore("like", {
 
       try {
         if (liked) {
-          await axios.post(`/posts/${postId}/unlike`);
+          await axios.post(`api/posts/${postId}/unlike`);
           postStore.likedPosts = postStore.likedPosts.filter(
             (id) => id !== postId,
           );
         } else {
-          await axios.post(`/posts/${postId}/like`);
+          await axios.post(`api/posts/${postId}/like`);
           postStore.likedPosts.push(postId);
         }
 

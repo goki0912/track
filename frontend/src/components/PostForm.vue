@@ -90,7 +90,7 @@ const themeId: number = Number(route.params.id);
 const searchTracks = async () => {
   if (searchQuery.value.length > 1) {
     const response = await axios.get(
-        `/spotify/search?query=${searchQuery.value}`,
+        `api/spotify/search?query=${searchQuery.value}`,
     );
     searchResults.value = response.data.tracks.items;
   }

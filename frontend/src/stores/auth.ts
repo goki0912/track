@@ -32,7 +32,7 @@ export const useAuthStore = defineStore("auth", () => {
   const sendPasswordResetEmail = async (email: string) => {
     try {
       // パスワードリセットメールを送信する処理
-      await axios.post("/password/email", {
+      await axios.post("api/password/email", {
         email,
       });
       toast.success("Password reset email sent", {
@@ -50,7 +50,7 @@ export const useAuthStore = defineStore("auth", () => {
     const token = route.params.token as string; // パラメータからトークン取得
 
     try {
-      await axios.post("/password/reset", {
+      await axios.post("api/password/reset", {
         // へーkeyとvalueが同じならこれでいいんだ?
         email,
         password,
