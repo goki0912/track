@@ -18,5 +18,20 @@ https://trackwave.net
 
 <img width="240" alt="image" src="https://github.com/user-attachments/assets/4c1db887-565a-48ab-9c29-57d5e59aa506">
 
+## 起動コマンド
+
+```
+# 本番環境
+$ docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
+$ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+```
+
+
+```
+# 開発環境
+$ docker-compose build
+$ docker-compose up -d
+```
+
 
 
