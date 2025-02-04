@@ -17,24 +17,12 @@ touch /var/run/supervisor.sock
 chmod 777 /var/run/supervisor.sock
 chown root:root /var/run/supervisor
 
-
-# 環境変数の確認とログ出力
-echo "Environment variables:"
-env | grep -E 'APP_ENV|DB_HOST|DB_DATABASE|DB_USERNAME|DB_PASSWORD|REVERB_' || echo "No relevant environment variables found."
-
 # Laravelのキャッシュディレクトリを準備
 echo "Preparing Laravel cache directories..."
 php artisan config:clear || echo "Failed to clear config cache (might not be required)."
 php artisan config:cache || echo "Failed to cache config."
 php artisan route:cache || echo "Failed to cache routes."
 php artisan view:cache || echo "Failed to cache views."
-
-# Supervisorの設定ファイルチェック
-#echo "Validating Supervisor configuration..."
-#if ! /usr/bin/supervisord -n --test; then
-#  echo "Supervisor configuration test failed. Exiting."
-#  exit 1
-#fi
 
 # Supervisorの起動
 echo "Starting Supervisor..."
