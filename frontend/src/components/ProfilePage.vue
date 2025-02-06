@@ -16,7 +16,7 @@ const loading = ref(true);
 // 初回認証用のSpotify認証URLを取得する関数
 const fetchSpotifyAuthUrl = async () => {
   try {
-    const response = await axios.get("/spotify/auth-url");
+    const response = await axios.get("api/spotify/auth-url");
     spotifyAuthUrl.value = response.data.url;
   } catch (error) {
     console.error("Error fetching Spotify auth URL:", error);
@@ -28,7 +28,7 @@ const handleSpotifyCallback = async () => {
   const code = route.query.code as string;
   if (code) {
     try {
-      const response = await axios.get(`/spotify/callback?code=${code}`);
+      const response = await axios.get(`api/spotify/callback?code=${code}`);
       const token = response.data.access_token;
       const refreshToken = response.data.refresh_token; // 追加: refresh_tokenの取得
       sessionStorage.setItem("spotify_access_token", token);
@@ -52,7 +52,7 @@ const handleSpotifyCallback = async () => {
 const getUserProfile = async () => {
   if (accessToken.value) {
     try {
-      const response = await axios.get("/spotify/user-profile", {
+      const response = await axios.get("api/spotify/user-profile", {
         headers: {
           spotifyAuthorization: `Bearer ${accessToken.value}`,
         },

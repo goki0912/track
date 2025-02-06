@@ -1,0 +1,38 @@
+services:
+  app:
+    env_file:
+      - ./backend/.env.production
+    # volumes:
+    #   - ./backend/.env.production:/var/www/html/.env.production
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    build:
+      target: prod
+
+
+
+  web:
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html              # 静的ファイル
+      - ./backend:/var/www/html                       # Laravelアプリケーション（API用）
+      - ./infra/docker/production/nginx:/etc/nginx/conf.d
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  db:
+    environment:
+      MYSQL_ROOT_PASSWORD: production-password
+      MYSQL_DATABASE: track-prod
+      MYSQL_USER: prod-user
+      MYSQL_PASSWORD: prod-password
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+

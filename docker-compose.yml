@@ -1,64 +1,24 @@
 services:
-  vue:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-    networks:
-      - app-network
-
   app:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    networks:
+      - app-network
     ports:
       - "8000:8000"
       - "9000:9000"
-      - "6001:6001"   # WebSocketのポートを公開
-    volumes:
-      - ./backend:/var/www/html
-      - ./backend/.env.local:/var/www/html/.env
-    networks:
-      - app-network
-    environment:
-      - COMPOSER_ALLOW_SUPERUSER=1
+      - "6001:6001"
 
-  #http://localhostで開く。nginxを介した実質本番を想定した設定となるが、不完全
   web:
     image: nginx:alpine
-    ports:
-      - "80:80"
-    volumes:
-      - ./infra/docker/development/nginx:/etc/nginx/conf.d
-      - ./frontend/dist:/usr/share/nginx/html
-      - ./backend:/var/www/html
     networks:
       - app-network
 
   db:
     image: mysql:8.0.32
-    ports:
-      - "3306:3306"
     volumes:
       - db-data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: track
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-    networks:
-      - app-network
-
-#開発用メールサーバー
-  mailpit:
-    image: axllent/mailpit
-    container_name: mailpit
-    ports:
-      - "1025:1025"    # SMTPポート
-      - "8025:8025"    # Web UIポート
     networks:
       - app-network
 

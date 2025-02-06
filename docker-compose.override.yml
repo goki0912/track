@@ -1,0 +1,48 @@
+services:
+  vue:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    networks:
+      - app-network
+
+  app:
+    volumes:
+      - ./backend:/var/www/html
+      - ./backend/.env.local:/var/www/html/.env
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+    build:
+      target: dev
+
+  web:
+    ports:
+      - "80:80"
+    volumes:
+      - ./infra/docker/development/nginx:/etc/nginx/conf.d
+      - ./frontend/dist:/usr/share/nginx/html
+      - ./backend:/var/www/html
+
+  db:
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: track
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - app-network
+

@@ -150,7 +150,7 @@ const themeId: number = Number(route.params.id);
 // ユーザー情報を取得する関数
 const fetchCurrentUser = async () => {
   try {
-    const response = await axios.get("/user");
+    const response = await axios.get("api/user");
     currentUser.value = response.data;
     // getCurrentUserPost();
   } catch (error) {
@@ -214,12 +214,12 @@ const playTrack = async (trackUri: string) => {
       return;
     }
 
-    const device = await axios.get("spotify/devices", {
+    const device = await axios.get("api/spotify/devices", {
       headers: { spotifyAuthorization: `Bearer ${accessToken}` },
     });
 
     const response = await axios.post(
-      "spotify/play-track",
+      "api/spotify/play-track",
       {
         device_id: device.data.devices[0].id,
         uri: trackUri,

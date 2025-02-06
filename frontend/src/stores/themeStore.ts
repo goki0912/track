@@ -9,7 +9,7 @@ export const useThemeStore = defineStore("theme", {
   actions: {
     async fetchThemes() {
       try {
-        const response = await axios.get("spotify/themes");
+        const response = await axios.get("api/spotify/themes");
         this.themes = response.data.themes;
       } catch (error) {
         console.error("Failed to fetch themes:", error);

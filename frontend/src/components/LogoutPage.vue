@@ -18,9 +18,10 @@ const router = useRouter();
 const logout = async () => {
   try {
     // CSRFトークンを取得
+    // ごめん
     await axios.get(`${process.env.VUE_APP_API_BASE_URL}/sanctum/csrf-cookie`);
     // ログアウトAPIにリクエスト
-    await axios.post("/logout");
+    await axios.post("api/logout");
     // Cookieからトークンと認証情報を削除
     document.cookie = "token=; Max-Age=0; path=/";
     document.cookie = "isAuthenticated=; Max-Age=0; path=/";

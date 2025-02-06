@@ -9,12 +9,12 @@ import Pusher from "pusher-js";
 import ToastPlugin from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-bootstrap.css";
 
-axios.defaults.baseURL = "http://localhost/api";
+axios.defaults.baseURL = `${process.env.VUE_APP_API_BASE_URL}`;
 axios.defaults.withCredentials = true; // Cookieを使用する場合
 
 const pinia = createPinia();
 const app = createApp(App);
-// Cookieからトークンを読み込んで設定
+// Cookieから特定の値を取得する関数
 const getCookie = (name: string) => {
   const value = `; ${document.cookie}`; // 全てのCookieを文字列として取得し、前にセミコロンとスペースを追加
   const parts: string[] = value.split(`; ${name}=`); // 指定された名前のCookieを探すために分割
@@ -22,6 +22,11 @@ const getCookie = (name: string) => {
     return parts.pop()?.split(";").shift(); // Cookieの値を取得して返す
   }
 };
+// CSRFトークンを取得して設定
+axios.get("api/csrf-token").then(response => {
+  const csrfToken = response.data.csrf_token; // トークンを取得
+  axios.defaults.headers.common["X-CSRF-TOKEN"] = csrfToken; // トークンをヘッダーに設定
+});
 // Cookieから'token'という名前の値を取得
 const token = getCookie("token");
 if (token) {

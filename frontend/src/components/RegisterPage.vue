@@ -67,7 +67,7 @@ export default {
   methods: {
     async register() {
       try {
-        await axios.post("/register", {
+        await axios.post("api/register", {
           name: this.name,
           email: this.email,
           password: this.password,
