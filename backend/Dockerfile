@@ -1,5 +1,5 @@
 # ======== 共通ベースイメージ ========
-FROM php:8.2-fpm AS base
+FROM php:8.2-fpm-bullseye AS base
 
 # 必要なライブラリのインストール
 RUN apt-get update \
